@@ -26,8 +26,8 @@ const runCommand = (command, args, name) => {
 
 console.log('🚀 Starting CareerAI Multi-Role Platform...');
 
-// Start Backend
-const backend = runCommand('node', ['server/index.js'], 'Backend');
+// Start Backend (with --watch for auto-restart on file changes)
+const backend = runCommand('node', ['--watch', 'server/index.js'], 'Backend');
 
 // Start Frontend
 const frontend = runCommand('npx', ['vite'], 'Frontend');
