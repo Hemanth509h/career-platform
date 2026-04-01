@@ -151,17 +151,63 @@ const OverviewLayout = () => {
   const { user } = useAuth();
   const [aiResult, setAiResult] = useState(null);
   const [expandedCareer, setExpandedCareer] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      setIsLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setIsLoading(false);
+          return;
+        }
+
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (res.ok) {
+          const userData = await res.json();
+          if (userData.lastAssessment) {
+            const syncedResult = {
+              profile: userData.profile,
+              careerMatches: userData.lastAssessment.matches
+            };
+            setAiResult(syncedResult);
+            localStorage.setItem('aiResult', JSON.stringify(syncedResult));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to sync user data:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     if (location.state?.aiResult) {
       setAiResult(location.state.aiResult);
       localStorage.setItem('aiResult', JSON.stringify(location.state.aiResult));
+      setIsLoading(false);
     } else {
       const saved = localStorage.getItem('aiResult');
-      if (saved) setAiResult(JSON.parse(saved));
-      else setAiResult({ profile: mockUser.profile, careerMatches: mockUser.careerMatches });
+      if (saved) {
+        setAiResult(JSON.parse(saved));
+        setIsLoading(false);
+      }
+      // Still fetch to ensure sync
+      fetchUserData();
     }
   }, [location.state]);
+
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+        <div style={{ width: '40px', height: '40px', border: '3px solid rgba(99, 102, 241, 0.1)', borderTopColor: 'var(--accent-color)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <style dangerouslySetInnerHTML={{ __html: `@keyframes spin { 100% { transform: rotate(360deg); } }` }} />
+      </div>
+    );
+  }
 
   const profile = aiResult?.profile || mockUser.profile;
   const matches = aiResult?.careerMatches || mockUser.careerMatches;

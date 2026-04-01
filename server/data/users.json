@@ -1,1 +1,485 @@
-[]
+[
+  {
+    "id": "u1775050117470",
+    "name": "p",
+    "email": "phemanthkumar509@gmail.com",
+    "password": "$2b$10$LMTAnHgsGxfVCnlCvwh0Ee0G56Dx5EuJw8gkpYmWdfwnC.n6VSl2C",
+    "profile": {
+      "personality": "Systematic Builder",
+      "aptitudeScore": 57,
+      "analyticalScore": 20,
+      "creativeScore": 33,
+      "socialScore": 44,
+      "technicalScore": 50,
+      "leadershipScore": 33,
+      "interests": [
+        "Data & Analytics"
+      ],
+      "learningStyle": "Visual Learner",
+      "academicStrengths": [
+        "Physics",
+        "Biology"
+      ]
+    },
+    "savedCareers": [],
+    "createdAt": "2026-04-01T13:28:37.470Z",
+    "lastAssessment": {
+      "matches": [
+        {
+          "id": "ind11",
+          "title": "Doctor (MBBS / MD)",
+          "demand": "Very High",
+          "salary": "₹8L – ₹1Cr+",
+          "category": "Healthcare",
+          "skills": [
+            "Clinical Medicine",
+            "Diagnosis",
+            "Patient Care",
+            "Pharmacology",
+            "Surgery"
+          ],
+          "description": "India's most respected career — heal patients and specialise through MD/MS.",
+          "matchScore": 88,
+          "explanation": "Your profile shows a 88% match due to your strong alignment in the Healthcare sector and your specified interest in Data & Analytics."
+        },
+        {
+          "id": "ind12",
+          "title": "Physiotherapist",
+          "demand": "High",
+          "salary": "₹3L – ₹15L",
+          "category": "Healthcare",
+          "skills": [
+            "Manual Therapy",
+            "Exercise Prescription",
+            "Sports Physio",
+            "Neurological Rehab",
+            "Assessment"
+          ],
+          "description": "Help patients recover from injuries, surgeries, and chronic conditions.",
+          "matchScore": 84,
+          "explanation": "Your profile shows a 84% match due to your strong alignment in the Healthcare sector and your specified interest in Data & Analytics."
+        },
+        {
+          "id": "ind04",
+          "title": "Cybersecurity Analyst",
+          "demand": "Very High",
+          "salary": "₹6L – ₹35L",
+          "category": "Technology",
+          "skills": [
+            "Ethical Hacking",
+            "SIEM",
+            "Linux",
+            "CEH",
+            "Incident Response"
+          ],
+          "description": "Protect India's digital infrastructure from cyber threats.",
+          "matchScore": 83,
+          "explanation": "Your profile shows a 83% match due to your strong alignment in the Technology sector and your specified interest in Data & Analytics."
+        },
+        {
+          "id": "ind01",
+          "title": "Software Engineer",
+          "demand": "Very High",
+          "salary": "₹5L – ₹50L",
+          "category": "Technology",
+          "skills": [
+            "DSA",
+            "Java/Python",
+            "System Design",
+            "Git",
+            "SQL"
+          ],
+          "description": "Design and build software powering India's IT sector and startup boom.",
+          "matchScore": 82,
+          "explanation": "Your profile shows a 82% match due to your strong alignment in the Technology sector and your specified interest in Data & Analytics."
+        },
+        {
+          "id": "ind03",
+          "title": "AI / ML Engineer",
+          "demand": "Very High",
+          "salary": "₹12L – ₹65L",
+          "category": "Technology",
+          "skills": [
+            "Deep Learning",
+            "TensorFlow/PyTorch",
+            "MLOps",
+            "NLP",
+            "Cloud"
+          ],
+          "description": "Build and deploy AI/ML systems for real-world products.",
+          "matchScore": 82,
+          "explanation": "Your profile shows a 82% match due to your strong alignment in the Technology sector and your specified interest in Data & Analytics."
+        }
+      ],
+      "date": "2026-04-01T13:35:37.699Z"
+    }
+  },
+  {
+    "id": "u1775050932494",
+    "name": "sana",
+    "email": "sksana6868@gmail.com",
+    "password": "$2b$10$skr3f8NpncD94TYc9NNB/OULS0h9LTp1NXo8pLhEDHtPzxkMexGQG",
+    "profile": {
+      "personality": "Creative Visionary",
+      "aptitudeScore": 86,
+      "analyticalScore": 73,
+      "creativeScore": 67,
+      "socialScore": 68,
+      "technicalScore": 60,
+      "leadershipScore": 80,
+      "interests": [
+        "Education & Teaching",
+        "Social Impact & NGO"
+      ],
+      "learningStyle": "Visual Learner",
+      "academicStrengths": [
+        "Mathematics",
+        "English & Communication",
+        "History & Arts"
+      ]
+    },
+    "savedCareers": [],
+    "createdAt": "2026-04-01T13:42:12.495Z",
+    "lastAssessment": {
+      "matches": [
+        {
+          "id": "ind21",
+          "title": "Teacher / Educator",
+          "demand": "High",
+          "salary": "₹3L – ₹20L",
+          "category": "Education",
+          "skills": [
+            "Subject Expertise",
+            "Curriculum Design",
+            "EdTech Tools",
+            "Assessment Design",
+            "Communication"
+          ],
+          "description": "Shape the next generation as a school teacher, professor, or EdTech creator.",
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Education sector and your specified interest in Education & Teaching."
+        },
+        {
+          "id": "ind10",
+          "title": "IAS / Civil Services Officer",
+          "demand": "Stable",
+          "salary": "₹7L – ₹18L + perks",
+          "category": "Government",
+          "skills": [
+            "General Studies",
+            "Essay Writing",
+            "CSAT",
+            "Current Affairs",
+            "Ethics"
+          ],
+          "description": "India's most prestigious career — serve the nation through UPSC Civil Services.",
+          "matchScore": 94,
+          "explanation": "Your profile shows a 94% match due to your strong alignment in the Government sector and your specified interest in Education & Teaching."
+        },
+        {
+          "id": "ind08",
+          "title": "Management Consultant",
+          "demand": "High",
+          "salary": "₹12L – ₹60L",
+          "category": "Business",
+          "skills": [
+            "Problem Solving",
+            "Case Frameworks",
+            "Business Strategy",
+            "Excel",
+            "Data Analysis"
+          ],
+          "description": "Solve complex business problems for India's top firms (McKinsey, BCG, Bain).",
+          "matchScore": 87,
+          "explanation": "Your profile shows a 87% match due to your strong alignment in the Business sector and your specified interest in Education & Teaching."
+        },
+        {
+          "id": "ind19",
+          "title": "HR Manager",
+          "demand": "Medium",
+          "salary": "₹5L – ₹25L",
+          "category": "Business",
+          "skills": [
+            "Talent Acquisition",
+            "SAP SuccessFactors",
+            "Labour Law",
+            "L&D",
+            "Employee Engagement"
+          ],
+          "description": "Manage talent and people strategy for India's leading organisations.",
+          "matchScore": 85,
+          "explanation": "Your profile shows a 85% match due to your strong alignment in the Business sector and your specified interest in Education & Teaching."
+        },
+        {
+          "id": "ind17",
+          "title": "Product Manager",
+          "demand": "Very High",
+          "salary": "₹12L – ₹55L",
+          "category": "Business",
+          "skills": [
+            "Product Strategy",
+            "SQL",
+            "Agile",
+            "User Research",
+            "Stakeholder Mgmt"
+          ],
+          "description": "Drive product strategy and execution at India's unicorns and tech companies.",
+          "matchScore": 84,
+          "explanation": "Your profile shows a 84% match due to your strong alignment in the Business sector and your specified interest in Education & Teaching."
+        }
+      ],
+      "date": "2026-04-01T13:45:22.270Z"
+    }
+  },
+  {
+    "id": "u1775051364553",
+    "name": "vaishnavi",
+    "email": "sarikonda975@gmail.com",
+    "password": "$2b$10$0fMxrillIlnBPh0SyC8Mu.GmhNKAJkLuf7b/f.0Fsj6oIrk8dQWS6",
+    "profile": {
+      "personality": "Creative Visionary",
+      "aptitudeScore": 89,
+      "analyticalScore": 87,
+      "creativeScore": 80,
+      "socialScore": 72,
+      "technicalScore": 65,
+      "leadershipScore": 73,
+      "interests": [
+        "Healthcare & Medicine",
+        "Social Impact & NGO",
+        "Data & Analytics"
+      ],
+      "learningStyle": "Auditory Learner",
+      "academicStrengths": [
+        "English & Communication",
+        "History & Arts",
+        "Psychology",
+        "Economics"
+      ]
+    },
+    "savedCareers": [],
+    "createdAt": "2026-04-01T13:49:24.553Z",
+    "lastAssessment": {
+      "matches": [
+        {
+          "id": "ind12",
+          "title": "Physiotherapist",
+          "demand": "High",
+          "salary": "₹3L – ₹15L",
+          "category": "Healthcare",
+          "skills": [
+            "Manual Therapy",
+            "Exercise Prescription",
+            "Sports Physio",
+            "Neurological Rehab",
+            "Assessment"
+          ],
+          "description": "Help patients recover from injuries, surgeries, and chronic conditions.",
+          "matchScore": 97,
+          "explanation": "Your profile shows a 97% match due to your strong alignment in the Healthcare sector and your specified interest in Healthcare & Medicine."
+        },
+        {
+          "id": "ind22",
+          "title": "Financial Analyst",
+          "demand": "High",
+          "salary": "₹5L – ₹30L",
+          "category": "Finance",
+          "skills": [
+            "Financial Modelling",
+            "Excel",
+            "Equity Research",
+            "Valuation",
+            "Power BI"
+          ],
+          "description": "Analyse financial data to guide investment decisions at banks and corporates.",
+          "matchScore": 96,
+          "explanation": "Your profile shows a 96% match due to your strong alignment in the Finance sector and your specified interest in Healthcare & Medicine."
+        },
+        {
+          "id": "ind11",
+          "title": "Doctor (MBBS / MD)",
+          "demand": "Very High",
+          "salary": "₹8L – ₹1Cr+",
+          "category": "Healthcare",
+          "skills": [
+            "Clinical Medicine",
+            "Diagnosis",
+            "Patient Care",
+            "Pharmacology",
+            "Surgery"
+          ],
+          "description": "India's most respected career — heal patients and specialise through MD/MS.",
+          "matchScore": 95,
+          "explanation": "Your profile shows a 95% match due to your strong alignment in the Healthcare sector and your specified interest in Healthcare & Medicine."
+        },
+        {
+          "id": "ind07",
+          "title": "Investment Banker",
+          "demand": "High",
+          "salary": "₹15L – ₹1Cr+",
+          "category": "Finance",
+          "skills": [
+            "DCF/LBO Modelling",
+            "Valuation",
+            "M&A",
+            "Capital Markets",
+            "Excel"
+          ],
+          "description": "Facilitate IPOs, mergers, and capital raising for top Indian corporates.",
+          "matchScore": 94,
+          "explanation": "Your profile shows a 94% match due to your strong alignment in the Finance sector and your specified interest in Healthcare & Medicine."
+        },
+        {
+          "id": "ind06",
+          "title": "Chartered Accountant (CA)",
+          "demand": "High",
+          "salary": "₹7L – ₹40L",
+          "category": "Finance",
+          "skills": [
+            "Ind AS",
+            "GST",
+            "Audit",
+            "Corporate Law",
+            "Tally ERP"
+          ],
+          "description": "India's premier finance qualification — audit, tax, and financial advisory.",
+          "matchScore": 93,
+          "explanation": "Your profile shows a 93% match due to your strong alignment in the Finance sector and your specified interest in Healthcare & Medicine."
+        }
+      ],
+      "date": "2026-04-01T13:52:20.224Z"
+    }
+  },
+  {
+    "id": "u1775051470356",
+    "name": "sam",
+    "email": "sam@gmailllllll.com",
+    "password": "$2b$10$f8hYSf3JDpnoul9dckJm0uWWuk1QI90/byXCTp2P0uVwuCQavsO72",
+    "profile": {
+      "personality": "Creative Visionary",
+      "aptitudeScore": 92,
+      "analyticalScore": 87,
+      "creativeScore": 80,
+      "socialScore": 64,
+      "technicalScore": 65,
+      "leadershipScore": 67,
+      "interests": [
+        "Data & Analytics",
+        "Technology & Software",
+        "Design & Creativity"
+      ],
+      "learningStyle": "Visual Learner",
+      "academicStrengths": [
+        "Mathematics",
+        "English & Communication",
+        "Statistics",
+        "Physics"
+      ]
+    },
+    "savedCareers": [],
+    "createdAt": "2026-04-01T13:51:10.356Z",
+    "lastAssessment": {
+      "matches": [
+        {
+          "id": "ind01",
+          "title": "Software Engineer",
+          "demand": "Very High",
+          "salary": "₹5L – ₹50L",
+          "category": "Technology",
+          "skills": [
+            "DSA",
+            "Java/Python",
+            "System Design",
+            "Git",
+            "SQL"
+          ],
+          "description": "Design and build software powering India's IT sector and startup boom.",
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Data & Analytics."
+        },
+        {
+          "id": "ind02",
+          "title": "Data Scientist",
+          "demand": "Very High",
+          "salary": "₹8L – ₹45L",
+          "category": "Technology",
+          "skills": [
+            "Python",
+            "ML",
+            "SQL",
+            "Statistics",
+            "Tableau"
+          ],
+          "description": "Extract insights from large datasets using statistics and machine learning.",
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Data & Analytics."
+        },
+        {
+          "id": "ind03",
+          "title": "AI / ML Engineer",
+          "demand": "Very High",
+          "salary": "₹12L – ₹65L",
+          "category": "Technology",
+          "skills": [
+            "Deep Learning",
+            "TensorFlow/PyTorch",
+            "MLOps",
+            "NLP",
+            "Cloud"
+          ],
+          "description": "Build and deploy AI/ML systems for real-world products.",
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Data & Analytics."
+        },
+        {
+          "id": "ind04",
+          "title": "Cybersecurity Analyst",
+          "demand": "Very High",
+          "salary": "₹6L – ₹35L",
+          "category": "Technology",
+          "skills": [
+            "Ethical Hacking",
+            "SIEM",
+            "Linux",
+            "CEH",
+            "Incident Response"
+          ],
+          "description": "Protect India's digital infrastructure from cyber threats.",
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Data & Analytics."
+        },
+        {
+          "id": "ind05",
+          "title": "Cloud Solutions Architect",
+          "demand": "Very High",
+          "salary": "₹15L – ₹60L",
+          "category": "Technology",
+          "skills": [
+            "AWS/Azure/GCP",
+            "Terraform",
+            "Kubernetes",
+            "DevOps",
+            "System Design"
+          ],
+          "description": "Design and manage cloud infrastructure for enterprises and startups.",
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Data & Analytics."
+        }
+      ],
+      "date": "2026-04-01T13:55:04.718Z"
+    }
+  },
+  {
+    "id": "u1775051550995",
+    "name": "phh",
+    "email": "phemanthkumar746@gmail.com",
+    "password": "$2b$10$xK0qHtldsviXyipXMHAHruPhr3qRuVlK4FLwMsNkqN8xrospXyQFe",
+    "profile": {
+      "personality": null,
+      "aptitudeScore": null,
+      "interests": []
+    },
+    "savedCareers": [],
+    "createdAt": "2026-04-01T13:52:30.995Z"
+  }
+]

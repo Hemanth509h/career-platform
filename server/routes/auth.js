@@ -2,8 +2,23 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { findUserByEmail, addUser } from '../utils/db.js';
+import { auth } from '../middleware/auth.js';
 
 const router = express.Router();
+
+router.get('/me', auth, async (req, res) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: "Not authenticated" });
+    const user = await findUserByEmail(req.user.email);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    
+    // Don't send password
+    const { password, ...userData } = user;
+    res.json(userData);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 router.post('/register', async (req, res) => {
   try {

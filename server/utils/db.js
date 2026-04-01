@@ -35,6 +35,11 @@ export const findUserByEmail = async (email) => {
     return users.find(u => u.email === email);
 };
 
+export const findUserById = async (id) => {
+    const users = await readUsers();
+    return users.find(u => u.id === id);
+};
+
 export const addUser = async (user) => {
     const users = await readUsers();
     // Simple ID generation for JSON storage
@@ -48,9 +53,9 @@ export const addUser = async (user) => {
     return newUser;
 };
 
-export const saveUserAssessment = async (email, aiResult) => {
+export const saveUserAssessment = async (userId, aiResult) => {
     const users = await readUsers();
-    const index = users.findIndex(u => u.email === email);
+    const index = users.findIndex(u => u.id === userId);
     if (index !== -1) {
         users[index].profile = aiResult.profile;
         users[index].lastAssessment = {

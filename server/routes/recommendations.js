@@ -165,8 +165,8 @@ Respond ONLY as valid JSON (no markdown, no backticks):
     }
 
     // Save to user profile if logged in
-    if (req.user && req.user.email) {
-      await saveUserAssessment(req.user.email, aiResult);
+    if (req.user && req.user.id) {
+      await saveUserAssessment(req.user.id, aiResult);
     }
 
     return res.json(aiResult);

@@ -8,7 +8,7 @@ router.post('/', async (req, res) => {
     const { messages, userProfile } = req.body;
 
     // If no valid Gemini API key, fallback to smart contextual mock
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'AIzaSyATQaTnnEywFuQ_t4e0GXfx9TrsuHq3p-U') {
       const mockResponses = [
         `Great question! Based on a typical student profile, careers in Data Science, AI Engineering, and UX Research are among the most rewarding in 2026. Would you like me to explain the skill path for any of these?`,
         `The tech industry in India has over 5 million job openings annually. Fields like AI/ML, Cybersecurity, and Cloud Architecture are growing at 35%+ year-over-year. Would you like a detailed roadmap?`,
