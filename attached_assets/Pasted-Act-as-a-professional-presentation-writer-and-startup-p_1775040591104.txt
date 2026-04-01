@@ -1,0 +1,72 @@
+Act as a professional presentation writer and startup pitch expert.
+
+Convert the following content into a clear, engaging, and impactful 4-member presentation script suitable for a hackathon or jury presentation.
+
+Requirements:
+- Divide content into 4 speakers (Member 1, Member 2, Member 3, Member 4)
+- Maintain a natural speaking tone (not robotic)
+- Keep it concise but powerful
+- Add smooth transitions between speakers
+- Highlight key points for emphasis
+- Make it sound confident and persuasive
+- Ensure clarity for a non-technical audience
+
+Content:
+
+Topic: AI-Powered Personalized Career Guidance Platform
+
+Member 1:
+Focus on problem statement and importance:
+- Students face career confusion due to too many choices (50,000+ programs, emerging careers like AI, sustainability, etc.)
+- Information overload from multiple sources (parents, teachers, social media)
+- Conflicting and outdated advice
+- Lack of personalized counseling (1 counselor for hundreds of students)
+- Rural students have even less access
+- Consequences: wrong course choices, switching majors, dropouts, low confidence
+- Statistics: 40–60% students change majors, mismatch with industry needs
+- Core problem: lack of intelligent, personalized career guidance
+
+Member 2:
+Explain solution and AI concept:
+- AI-powered personalized career mentor
+- Student profiling using:
+  personality, aptitude, interests, academic strength, learning style, socio-economic context
+- AI identifies differences between similar interests (e.g., cybersecurity vs UI/UX)
+- Career matching using machine learning
+- Includes:
+  market demand, salary trends, skill growth, stability
+- Explainable AI recommendations with reasoning
+
+Member 3:
+Explain course recommendation and tech:
+- Course recommendation engine based on:
+  career goal, budget, location, duration, mode, accreditation, placements
+- Compare multiple course options
+- Provide both traditional and modern paths (degrees + certifications + bootcamps)
+- Generate personalized learning roadmap:
+  skills, certifications, internships
+- Tech stack:
+  NLP chatbot, recommendation systems, predictive analytics, job market data
+- Mobile-first platform
+
+Member 4:
+Explain impact and conclusion:
+- Benefits:
+  students (clarity, better choices, placements)
+  institutions (retention, outcomes)
+  employers (skilled graduates)
+- Metrics:
+  80% clarity improvement
+  50% reduction in major switching
+  30% better placements
+- Unique points:
+  holistic, dynamic, explainable, affordable
+- Multilingual and scalable
+- Implementation phases:
+  MVP → market integration → scaling
+- Strong closing statement
+
+Output format:
+- Clear script with headings for each member
+- Each section 1–2 minutes speaking length
+- Add impactful opening and closing lines
