@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, Link } from 'react-router-dom';
+import { useParams, useLocation, Link, useSearchParams } from 'react-router-dom';
 import { Search, Filter, BookOpen, Star, Clock, MapPin, Award, TrendingUp, X, BarChart2, ChevronDown } from 'lucide-react';
 import Card from '../ui/Card';
 import { allCourses, filterCourses } from '../../services/courseData';
@@ -115,7 +115,8 @@ const CompareModal = ({ courses, onClose }) => (
 );
 
 const CourseRecommendations = () => {
-  const { careerId } = useParams();
+  const [searchParams] = useSearchParams();
+  const careerId = searchParams.get('careerId');
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({ mode: 'All', maxFee: 999999, maxMonths: 99, category: 'All' });
   const [compareList, setCompareList] = useState([]);

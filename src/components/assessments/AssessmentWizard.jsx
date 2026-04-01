@@ -163,9 +163,13 @@ const AssessmentWizard = () => {
     localStorage.setItem('profileContext', JSON.stringify(profileContext));
 
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch('/api/recommendations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ answers: { ...answers, ...learningAnswers }, profileContext }),
       });
       const aiResult = await res.json();

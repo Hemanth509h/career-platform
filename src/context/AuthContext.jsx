@@ -26,7 +26,15 @@ export const AuthProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      const data = await res.json();
+      const contentType = res.headers.get('content-type');
+      let data = {};
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(`Server error: Received non-JSON response. Please ensure the backend server is running on port 3001.`);
+      }
+      
       if (!res.ok) throw new Error(data.message || 'Login failed');
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -50,7 +58,15 @@ export const AuthProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
       });
-      const data = await res.json();
+      const contentType = res.headers.get('content-type');
+      let data = {};
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(`Server error: Received non-JSON response. Please ensure the backend server is running on port 3001.`);
+      }
+      
       if (!res.ok) throw new Error(data.message || 'Registration failed');
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));

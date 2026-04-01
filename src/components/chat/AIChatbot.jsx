@@ -74,11 +74,9 @@ const AIChatbot = () => {
           zIndex: 1000,
           cursor: 'pointer',
           border: '1px solid var(--glass-border)',
-          transition: 'transform 0.3s ease, background 0.3s ease',
+          transition: 'background 0.3s ease',
           backdropFilter: 'blur(16px)'
         }}
-        onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-        onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
       >
         {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
       </button>
@@ -87,7 +85,7 @@ const AIChatbot = () => {
       {isOpen && (
         <div
           id="chatbot-window"
-          className="glass-panel animate-slide-up"
+          className="glass-panel"
           style={{
             position: 'fixed',
             bottom: '110px',
@@ -106,32 +104,32 @@ const AIChatbot = () => {
           {/* Header */}
           <div style={{ padding: '24px', background: 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.15))', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div className="icon-bounce" style={{ background: 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))', width: '44px', height: '44px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 12px rgba(99,102,241,0.3)' }}>
+              <div style={{ background: 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))', width: '44px', height: '44px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 12px rgba(99,102,241,0.3)' }}>
                 <Bot size={24} color="white" />
               </div>
               <div>
                 <h3 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 700 }}>Career Advisor AI</h3>
                 <div style={{ fontSize: '0.75rem', color: 'var(--success-color)', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', fontWeight: 600 }}>
-                  <span className="animate-pulse" style={{ width: '8px', height: '8px', background: 'var(--success-color)', borderRadius: '4px', display: 'inline-block' }}></span>
+                  <span style={{ width: '8px', height: '8px', background: 'var(--success-color)', borderRadius: '4px', display: 'inline-block' }}></span>
                   Online • Gemini 1.5 Flash
                 </div>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', width: '32px', height: '32px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }} className="hover-lift">
+            <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', width: '32px', height: '32px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}>
               <X size={18} />
             </button>
           </div>
 
           {/* Messages Area */}
-          <div className="stagger-children" style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px', background: 'rgba(0,0,0,0.2)' }}>
+          <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px', background: 'rgba(0,0,0,0.2)' }}>
             {messages.map((msg, idx) => (
-              <div key={msg.id} className="animate-fade-in" style={{ display: 'flex', gap: '12px', alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
+              <div key={msg.id} style={{ display: 'flex', gap: '12px', alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
                 {msg.sender === 'bot' && (
                   <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>
                     <Bot size={16} color="var(--accent-color)" />
                   </div>
                 )}
-                <div className="hover-lift" style={{
+                <div style={{
                   background: msg.sender === 'user' ? 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))' : 'rgba(255, 255, 255, 0.05)',
                   border: msg.sender === 'user' ? 'none' : '1px solid var(--glass-border)',
                   padding: '14px 18px',
@@ -151,11 +149,11 @@ const AIChatbot = () => {
               </div>
             ))}
             {isLoading && (
-              <div className="animate-fade-in" style={{ display: 'flex', gap: '12px', alignSelf: 'flex-start', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '12px', alignSelf: 'flex-start', alignItems: 'center' }}>
                 <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Loader size={16} color="var(--accent-color)" style={{ animation: 'spin 1.5s linear infinite' }} />
                 </div>
-                <div className="shimmer" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', padding: '12px 20px', borderRadius: '4px 20px 20px 20px', color: 'var(--text-secondary)', fontSize: '0.9rem', minWidth: '100px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', padding: '12px 20px', borderRadius: '4px 20px 20px 20px', color: 'var(--text-secondary)', fontSize: '0.9rem', minWidth: '100px' }}>
                   Analyzing your query...
                 </div>
               </div>
@@ -183,14 +181,12 @@ const AIChatbot = () => {
                   outline: 'none',
                   fontFamily: 'inherit',
                   fontSize: '0.95rem',
-                  transition: 'all 0.3s ease'
+                  transition: 'background 0.3s ease'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--accent-color)';
                   e.target.style.background = 'rgba(255,255,255,0.07)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                   e.target.style.background = 'rgba(255, 255, 255, 0.04)';
                 }}
               />
@@ -198,7 +194,6 @@ const AIChatbot = () => {
                 id="chatbot-send"
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="hover-lift"
                 style={{
                   position: 'absolute',
                   right: '6px',
@@ -213,7 +208,7 @@ const AIChatbot = () => {
                   color: 'white',
                   border: 'none',
                   cursor: isLoading || !input.trim() ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: 'all 0.3s ease',
                   boxShadow: isLoading || !input.trim() ? 'none' : '0 4px 12px rgba(99,102,241,0.3)'
                 }}
               >

@@ -1,5 +1,7 @@
 import express from 'express';
 import { GoogleGenAI } from '@google/genai';
+import { auth } from '../middleware/auth.js';
+import { saveUserAssessment } from '../utils/db.js';
 
 const router = express.Router();
 
@@ -34,7 +36,6 @@ const CAREER_DATABASE = [
 
 /**
  * Smart fallback logic to match careers if AI is unavailable.
- * Uses a 6-dimension heuristic (Personality, Aptitude, Interests, Academic, Learning, Context).
  */
 const generateMockRecommendations = (answers = {}, profileContext = {}) => {
   const vals = Object.values(answers);
@@ -106,17 +107,17 @@ const generateMockRecommendations = (answers = {}, profileContext = {}) => {
   };
 };
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const { answers, profileContext } = req.body;
+    let aiResult;
 
     if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
       await new Promise(r => setTimeout(r, 2000));
-      return res.json(generateMockRecommendations(answers || {}, profileContext || {}));
-    }
-
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const prompt = `
+      aiResult = generateMockRecommendations(answers || {}, profileContext || {});
+    } else {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const prompt = `
 You are an expert Indian career counselor AI. Analyse this student assessment:
 
 ASSESSMENT ANSWERS (keys=questionId, values=1-5 scale):
@@ -158,13 +159,28 @@ Respond ONLY as valid JSON (no markdown, no backticks):
   ]
 }`;
 
-    const response = await ai.models.generateContent({ model: 'gemini-1.5-flash', contents: prompt });
-    const clean = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
-    return res.json(JSON.parse(clean));
+      const response = await ai.models.generateContent({ model: 'gemini-1.5-flash', contents: prompt });
+      const clean = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
+      aiResult = JSON.parse(clean);
+    }
+
+    // Save to user profile if logged in
+    if (req.user && req.user.email) {
+      await saveUserAssessment(req.user.email, aiResult);
+    }
+
+    return res.json(aiResult);
   } catch (err) {
     console.error('AI Error:', err.message);
     await new Promise(r => setTimeout(r, 1000));
-    return res.json(generateMockRecommendations(req.body?.answers || {}, req.body?.profileContext || {}));
+    const fallback = generateMockRecommendations(req.body?.answers || {}, req.body?.profileContext || {});
+    
+    // Save fallback to user profile if logged in
+    if (req.user && req.user.email) {
+      await saveUserAssessment(req.user.email, fallback);
+    }
+    
+    return res.json(fallback);
   }
 });
 
