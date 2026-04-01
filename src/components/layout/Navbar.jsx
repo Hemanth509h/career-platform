@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Compass, LogOut, Menu, X, BookOpen, LayoutDashboard, Briefcase, ClipboardList } from 'lucide-react';
+import { Compass, LogOut, Menu, X, BookOpen, LayoutDashboard, Briefcase, ClipboardList, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
@@ -87,6 +87,10 @@ const Navbar = () => {
           </>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Link to="/parent-signup" style={{ color: '#eab308', fontWeight: 600, fontSize: '0.85rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgba(234,179,8,0.1)', borderRadius: '10px', border: '1px solid rgba(234,179,8,0.2)' }}>
+              <Users size={14} /> Parents
+            </Link>
+            <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 4px' }} />
             <Link to="/login" className="nav-link" style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.92rem', textDecoration: 'none', transition: 'color 0.2s' }}>Log In</Link>
             <Link id="nav-get-started" to="/register" className="btn-primary" style={{ padding: '10px 24px', fontSize: '0.9rem', borderRadius: '12px', textDecoration: 'none', fontWeight: 700, boxShadow: '0 4px 15px rgba(99,102,241,0.2)' }}>
               Get Started

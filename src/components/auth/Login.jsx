@@ -15,7 +15,9 @@ const Login = () => {
     e.preventDefault();
     const result = await login(email, password);
     if (result.success) {
-      navigate('/dashboard');
+      if (result.user?.role === 'admin') navigate('/admin-dashboard');
+      else if (result.user?.role === 'parent') navigate('/parent-dashboard');
+      else navigate('/dashboard');
     }
   };
 
@@ -61,6 +63,7 @@ const Login = () => {
               id="login-email"
               type="email"
               required
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="student@university.edu"
@@ -75,6 +78,7 @@ const Login = () => {
               id="login-password"
               type="password"
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"

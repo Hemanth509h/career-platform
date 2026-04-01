@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useLocation, Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, BookOpen, Star, Clock, MapPin, Award, TrendingUp, X, BarChart2, ChevronDown } from 'lucide-react';
+import { Search, Filter, BookOpen, Star, Clock, MapPin, Award, TrendingUp, X, BarChart2, ChevronDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import Card from '../ui/Card';
-import { allCourses, filterCourses } from '../../services/courseData';
 
 const ModeTag = ({ mode }) => {
   const colors = { Online: { bg: 'rgba(99,102,241,0.1)', text: 'var(--accent-color)' }, Offline: { bg: 'rgba(251,191,36,0.1)', text: 'var(--warning-color)' }, Hybrid: { bg: 'rgba(16,185,129,0.1)', text: 'var(--success-color)' } };
@@ -117,21 +116,64 @@ const CompareModal = ({ courses, onClose }) => (
 const CourseRecommendations = () => {
   const [searchParams] = useSearchParams();
   const careerId = searchParams.get('careerId');
+  
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filters, setFilters] = useState({ mode: 'All', maxFee: 999999, maxMonths: 99, category: 'All' });
+  
   const [compareList, setCompareList] = useState([]);
   const [showCompare, setShowCompare] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
-  const filtered = allCourses.filter(c => {
-    const matchSearch = !search || c.title.toLowerCase().includes(search.toLowerCase()) || c.provider.toLowerCase().includes(search.toLowerCase()) || c.skills.some(s => s.toLowerCase().includes(search.toLowerCase()));
-    const matchMode = filters.mode === 'All' || c.mode === filters.mode;
-    const matchFee = c.fee <= filters.maxFee;
-    const matchMonths = c.durationMonths <= filters.maxMonths;
-    const matchCategory = filters.category === 'All' || c.category === filters.category;
-    const matchCareer = !careerId || c.relatedCareers.includes(careerId);
-    return matchSearch && matchMode && matchFee && matchMonths && matchCategory && matchCareer;
-  });
+  // 1. Debounce Search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1); // Reset to first page on search
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // 2. Fetch Data from Server
+  const fetchCourses = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page,
+        limit: 12,
+        lean: true,
+        q: debouncedSearch,
+        mode: filters.mode,
+        maxFee: filters.maxFee === 999999 ? '' : filters.maxFee,
+        maxMonths: filters.maxMonths === 99 ? '' : filters.maxMonths,
+        category: filters.category,
+        careerId: careerId || ''
+      });
+
+      const res = await fetch(`/api/courses?${params.toString()}`);
+      const result = await res.json();
+      
+      if (res.ok) {
+        setCourses(result.data || []);
+        setTotal(result.total || 0);
+        setPages(result.pages || 1);
+      }
+    } catch (err) {
+      console.error('Error fetching courses:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, debouncedSearch, filters, careerId]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
 
   const toggleCompare = (course) => {
     setCompareList(prev => prev.find(c => c.id === course.id) ? prev.filter(c => c.id !== course.id) : prev.length < 3 ? [...prev, course] : prev);
@@ -250,28 +292,64 @@ const CourseRecommendations = () => {
 
       {/* Results */}
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>Showing <strong style={{ color: 'white' }}>{filtered.length}</strong> courses {careerId ? '(filtered by career)' : ''}</p>
+        <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+          {loading ? 'Searching...' : (
+            <>Showing <strong style={{ color: 'white' }}>{total}</strong> courses {careerId ? '(filtered by career)' : ''}</>
+          )}
+        </p>
         {careerId && <Link to="/courses" style={{ fontSize: '0.82rem', color: 'var(--accent-color)' }}>Show all courses</Link>}
       </div>
 
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+             <Loader2 size={40} className="animate-spin" color="var(--accent-color)" />
+             <p style={{ color: 'var(--text-secondary)' }}>Fetching Optimized Results...</p>
+        </div>
+      ) : courses.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-secondary)' }}>
           <BookOpen size={48} color="var(--glass-border)" style={{ marginBottom: '16px' }} />
-          <h3>No courses match your filters</h3>
-          <p style={{ marginTop: '8px', fontSize: '0.9rem' }}>Try adjusting your budget or mode settings</p>
+          <h3>No courses match your criteria</h3>
+          <p style={{ marginTop: '8px', fontSize: '0.9rem' }}>Try adjusting your filters or search keywords</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
-          {filtered.map(course => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              selected={!!compareList.find(c => c.id === course.id)}
-              onToggleCompare={toggleCompare}
-              compareDisabled={compareList.length >= 3}
-            />
-          ))}
-        </div>
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+            {courses.map(course => (
+              <CourseCard
+                key={course.id}
+                course={course}
+                selected={!!compareList.find(c => c.id === course.id)}
+                onToggleCompare={toggleCompare}
+                compareDisabled={compareList.length >= 3}
+              />
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {pages > 1 && (
+            <div style={{ marginTop: '48px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '24px' }}>
+              <button 
+                disabled={page === 1}
+                onClick={() => setPage(p => p - 1)}
+                className="btn-secondary" 
+                style={{ padding: '10px 18px', opacity: page === 1 ? 0.5 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}
+              >
+                <ChevronLeft size={18} /> Previous
+              </button>
+              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                Page <strong style={{ color: 'white' }}>{page}</strong> of {pages}
+              </div>
+              <button 
+                disabled={page === pages}
+                onClick={() => setPage(p => p + 1)}
+                className="btn-secondary" 
+                style={{ padding: '10px 18px', opacity: page === pages ? 0.5 : 1, cursor: page === pages ? 'not-allowed' : 'pointer' }}
+              >
+                Next <ChevronRight size={18} />
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {showCompare && <CompareModal courses={compareList} onClose={() => setShowCompare(false)} />}

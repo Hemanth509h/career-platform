@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, TrendingUp, Award, Briefcase, BookOpen, Building2, ChevronRight, Zap, Users, MapPin } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, TrendingUp, Award, Briefcase, BookOpen, Building2, ChevronRight, Zap, Users, Loader2 } from 'lucide-react';
 import Card from '../ui/Card';
 import AnimateOnScroll from '../ui/AnimateOnScroll';
-import { mockPathways } from '../../services/mockData';
 
 const StageColors = {
   Foundation: { color: '#6366f1', bg: 'rgba(99,102,241,0.12)', border: 'rgba(99,102,241,0.25)' },
@@ -19,9 +18,37 @@ const DemandBadge = ({ demand }) => {
 
 const CareerPathway = () => {
   const { id } = useParams();
-  const pathway = mockPathways[id];
+  const [pathway, setPathway] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!pathway) {
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/careers/${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Career not found');
+        return res.json();
+      })
+      .then(data => {
+        setPathway(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh', gap: '16px' }}>
+        <Loader2 className="animate-spin" size={40} color="var(--accent-color)" />
+        <p style={{ color: 'var(--text-secondary)' }}>Loading roadmap details...</p>
+      </div>
+    );
+  }
+
+  if (error || !pathway) {
     return (
       <div className="animate-fade-in" style={{ maxWidth: '700px', margin: '80px auto', textAlign: 'center', padding: '0 20px' }}>
         <h2 className="text-gradient" style={{ marginBottom: '16px' }}>Career not found</h2>
@@ -95,7 +122,14 @@ const CareerPathway = () => {
       {/* Learning Roadmap */}
       <div style={{ marginBottom: '32px' }}>
         <AnimateOnScroll animation="animate-slide-up" style={{ marginBottom: '40px' }}>
-          <h2 style={{ marginBottom: '8px', fontSize: '1.8rem', fontWeight: 800 }}>Your Learning Roadmap</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+            <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 800 }}>Your Learning Roadmap</h2>
+            {pathway.poweredByAI && (
+              <span className="animate-pulse" style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--accent-color)', border: '1px solid var(--accent-color)40', padding: '4px 10px', borderRadius: '12px', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                AI Model 1.5
+              </span>
+            )}
+          </div>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.6 }}>A structured 4-stage path from beginner to job-ready — with curated Indian resources and certifications.</p>
         </AnimateOnScroll>
 

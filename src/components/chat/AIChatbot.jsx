@@ -44,7 +44,7 @@ const AIChatbot = () => {
     } catch (err) {
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
-        text: "I'm temporarily offline. Please ensure the backend server is running on port 5000.",
+        text: "I'm temporarily offline. Please ensure the backend server is running on port 3001.",
         sender: 'bot'
       }]);
     } finally {
@@ -132,14 +132,25 @@ const AIChatbot = () => {
                 <div style={{
                   background: msg.sender === 'user' ? 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))' : 'rgba(255, 255, 255, 0.05)',
                   border: msg.sender === 'user' ? 'none' : '1px solid var(--glass-border)',
-                  padding: '14px 18px',
-                  borderRadius: msg.sender === 'user' ? '20px 20px 4px 20px' : '4px 20px 20px 20px',
-                  color: 'white',
-                  fontSize: '0.92rem',
                   lineHeight: '1.6',
                   boxShadow: msg.sender === 'user' ? '0 4px 15px rgba(99,102,241,0.2)' : 'none'
                 }}>
-                  {msg.text}
+                  {msg.text.split(/(!\[.*?\]\(.*?\))/g).map((part, i) => {
+                    const imgMatch = part.match(/!\[(.*?)\]\((.*?)\)/);
+                    if (imgMatch) {
+                      return (
+                        <div key={i} style={{ marginTop: '10px', background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                          <img 
+                            src={imgMatch[2]} 
+                            alt={imgMatch[1] || 'AI Generated Chart'} 
+                            style={{ maxWidth: '100%', borderRadius: '8px', display: 'block' }}
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                        </div>
+                      );
+                    }
+                    return <span key={i}>{part}</span>;
+                  })}
                 </div>
                 {msg.sender === 'user' && (
                   <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>

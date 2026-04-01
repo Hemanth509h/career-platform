@@ -1,0 +1,406 @@
+[
+  {
+    "userId": "u1775073150466",
+    "savedCareers": [],
+    "selectedCareers": [],
+    "recommendations": []
+  },
+  {
+    "userId": "u1775073612112",
+    "profile": {
+      "personality": "Systematic Builder",
+      "aptitudeScore": 81,
+      "analyticalScore": 60,
+      "creativeScore": 60,
+      "socialScore": 60,
+      "technicalScore": 60,
+      "leadershipScore": 60,
+      "interests": [
+        "Technology & Software"
+      ],
+      "learningStyle": "Visual Learner",
+      "academicStrengths": [
+        "Mathematics",
+        "Chemistry",
+        "Computer Science",
+        "English & Communication"
+      ],
+      "visualSummaryUrl": "https://quickchart.io/chart?c={type:'radar',data:{labels:['Analytical','Creative','Social','Technical','Leadership'],datasets:[{label:'Your%20Profile',data:[60,60,60,60,60],backgroundColor:'rgba(99,102,241,0.2)',borderColor:'rgba(99,102,241,1)'}]}}"
+    },
+    "lastAssessment": {
+      "matches": [
+        {
+          "title": "Software Engineer",
+          "salary": "₹5L – ₹50L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Design and build software applications.",
+          "skills": [
+            "DSA",
+            "Java",
+            "Python"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "AI / ML Engineer",
+          "salary": "₹12L – ₹65L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Build and deploy AI models.",
+          "skills": [
+            "Deep Learning",
+            "NLP"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "Cloud Architect",
+          "salary": "₹15L – ₹60L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Design cloud systems.",
+          "skills": [
+            "AWS",
+            "Azure"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "Mobile Developer",
+          "salary": "₹5L – ₹35L",
+          "demand": "High",
+          "category": "Technology",
+          "description": "Android/iOS app dev.",
+          "skills": [
+            "Flutter",
+            "Kotlin"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "DevOps Engineer",
+          "salary": "₹8L – ₹45L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "System reliability and automation.",
+          "skills": [
+            "K8s",
+            "Docker"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        }
+      ],
+      "date": "2026-04-01T20:15:38.926Z"
+    },
+    "savedCareers": [],
+    "selectedCareers": [],
+    "recommendations": []
+  },
+  {
+    "userId": "u1775075562206",
+    "profile": {
+      "personality": "Creative Visionary",
+      "aptitudeScore": 98,
+      "analyticalScore": 100,
+      "creativeScore": 80,
+      "socialScore": 76,
+      "technicalScore": 70,
+      "leadershipScore": 87,
+      "interests": [
+        "Technology & Software",
+        "Social Impact & NGO"
+      ],
+      "learningStyle": "Visual Learner",
+      "academicStrengths": [
+        "Mathematics",
+        "Physics",
+        "Computer Science",
+        "English & Communication"
+      ],
+      "visualSummaryUrl": "https://quickchart.io/chart?c={type:'radar',data:{labels:['Analytical','Creative','Social','Technical','Leadership'],datasets:[{label:'Your%20Profile',data:[100,80,76,70,87],backgroundColor:'rgba(99,102,241,0.2)',borderColor:'rgba(99,102,241,1)'}]}}"
+    },
+    "lastAssessment": {
+      "matches": [
+        {
+          "title": "Software Engineer",
+          "salary": "₹5L – ₹50L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Design and build software applications.",
+          "skills": [
+            "DSA",
+            "Java",
+            "Python"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "Data Scientist",
+          "salary": "₹8L – ₹45L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Extract insights from big data.",
+          "skills": [
+            "Python",
+            "ML",
+            "SQL"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "AI / ML Engineer",
+          "salary": "₹12L – ₹65L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Build and deploy AI models.",
+          "skills": [
+            "Deep Learning",
+            "NLP"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "Cybersecurity Analyst",
+          "salary": "₹6L – ₹35L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Protect digital systems.",
+          "skills": [
+            "Hacking",
+            "Linux"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "Cloud Architect",
+          "salary": "₹15L – ₹60L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Design cloud systems.",
+          "skills": [
+            "AWS",
+            "Azure"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        }
+      ],
+      "date": "2026-04-01T20:37:46.226Z"
+    },
+    "savedCareers": [],
+    "selectedCareers": [],
+    "recommendations": []
+  },
+  {
+    "userId": "u1775076212131",
+    "profile": {
+      "personality": "Creative Visionary",
+      "aptitudeScore": 98,
+      "analyticalScore": 100,
+      "creativeScore": 87,
+      "socialScore": 76,
+      "technicalScore": 70,
+      "leadershipScore": 87,
+      "interests": [
+        "Technology & Software",
+        "Data & Analytics"
+      ],
+      "learningStyle": "Visual Learner",
+      "academicStrengths": [
+        "Mathematics",
+        "Physics"
+      ],
+      "visualSummaryUrl": "https://quickchart.io/chart?c={type:'radar',data:{labels:['Analytical','Creative','Social','Technical','Leadership'],datasets:[{label:'Your%20Profile',data:[100,87,76,70,87],backgroundColor:'rgba(99,102,241,0.2)',borderColor:'rgba(99,102,241,1)'}]}}"
+    },
+    "lastAssessment": {
+      "matches": [
+        {
+          "title": "Software Engineer",
+          "salary": "₹5L – ₹50L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Design and build software applications.",
+          "skills": [
+            "DSA",
+            "Java",
+            "Python"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "Data Scientist",
+          "salary": "₹8L – ₹45L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Extract insights from big data.",
+          "skills": [
+            "Python",
+            "ML",
+            "SQL"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "AI / ML Engineer",
+          "salary": "₹12L – ₹65L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Build and deploy AI models.",
+          "skills": [
+            "Deep Learning",
+            "NLP"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "Cybersecurity Analyst",
+          "salary": "₹6L – ₹35L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Protect digital systems.",
+          "skills": [
+            "Hacking",
+            "Linux"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        },
+        {
+          "title": "Cloud Architect",
+          "salary": "₹15L – ₹60L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Design cloud systems.",
+          "skills": [
+            "AWS",
+            "Azure"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Technology & Software."
+        }
+      ],
+      "date": "2026-04-01T20:45:25.433Z"
+    },
+    "savedCareers": [],
+    "selectedCareers": [],
+    "recommendations": []
+  },
+  {
+    "userId": "u1775076658445",
+    "profile": {
+      "personality": "Creative Visionary",
+      "aptitudeScore": 98,
+      "analyticalScore": 100,
+      "creativeScore": 87,
+      "socialScore": 76,
+      "technicalScore": 70,
+      "leadershipScore": 87,
+      "interests": [
+        "Healthcare & Medicine",
+        "Technology & Software",
+        "Data & Analytics"
+      ],
+      "learningStyle": "Visual Learner",
+      "academicStrengths": [
+        "Physics",
+        "Mathematics",
+        "English & Communication"
+      ],
+      "visualSummaryUrl": "https://quickchart.io/chart?c={type:'radar',data:{labels:['Analytical','Creative','Social','Technical','Leadership'],datasets:[{label:'Your%20Profile',data:[100,87,76,70,87],backgroundColor:'rgba(99,102,241,0.2)',borderColor:'rgba(99,102,241,1)'}]}}"
+    },
+    "lastAssessment": {
+      "matches": [
+        {
+          "title": "Software Engineer",
+          "salary": "₹5L – ₹50L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Design and build software applications.",
+          "skills": [
+            "DSA",
+            "Java",
+            "Python"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Healthcare & Medicine."
+        },
+        {
+          "title": "Data Scientist",
+          "salary": "₹8L – ₹45L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Extract insights from big data.",
+          "skills": [
+            "Python",
+            "ML",
+            "SQL"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Healthcare & Medicine."
+        },
+        {
+          "title": "AI / ML Engineer",
+          "salary": "₹12L – ₹65L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Build and deploy AI models.",
+          "skills": [
+            "Deep Learning",
+            "NLP"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Healthcare & Medicine."
+        },
+        {
+          "title": "Cybersecurity Analyst",
+          "salary": "₹6L – ₹35L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Protect digital systems.",
+          "skills": [
+            "Hacking",
+            "Linux"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Healthcare & Medicine."
+        },
+        {
+          "title": "Cloud Architect",
+          "salary": "₹15L – ₹60L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Design cloud systems.",
+          "skills": [
+            "AWS",
+            "Azure"
+          ],
+          "matchScore": 98,
+          "explanation": "Your profile shows a 98% match due to your strong alignment in the Technology sector and your specified interest in Healthcare & Medicine."
+        }
+      ],
+      "date": "2026-04-01T20:51:36.893Z"
+    },
+    "savedCareers": [],
+    "selectedCareers": [],
+    "recommendations": []
+  },
+  {
+    "userId": "u1775079843998",
+    "savedCareers": [],
+    "selectedCareers": [],
+    "recommendations": []
+  }
+]

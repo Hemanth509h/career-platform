@@ -8,13 +8,11 @@ router.post('/', async (req, res) => {
     const { messages, userProfile } = req.body;
 
     // If no valid Gemini API key, fallback to smart contextual mock
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'AIzaSyATQaTnnEywFuQ_t4e0GXfx9TrsuHq3p-U') {
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
       const mockResponses = [
-        `Great question! Based on a typical student profile, careers in Data Science, AI Engineering, and UX Research are among the most rewarding in 2026. Would you like me to explain the skill path for any of these?`,
-        `The tech industry in India has over 5 million job openings annually. Fields like AI/ML, Cybersecurity, and Cloud Architecture are growing at 35%+ year-over-year. Would you like a detailed roadmap?`,
-        `For a student interested in healthcare technology, roles like Health Informatics Specialist, Clinical Data Analyst, or Biomedical Engineer combine both passions. Want me to outline what courses you'd need?`,
-        `Your analytical aptitude score suggests strong alignment with quantitative careers: Actuary, Financial Analyst, or Operations Research Scientist. These roles offer ₹8–25 LPA starting salaries in India.`,
-        `Emerging hybrid careers like "AI Ethics Consultant", "Sustainability Data Analyst", and "EdTech Product Manager" are uniquely suited for students who want to make a broader societal impact.`,
+        `Great question! Based on your profile, careers like Data Science and AI Engineering are high demand. Here is a chart of your top career matches: ![](https://quickchart.io/chart?c={type:'bar',data:{labels:['Data Scientist','AI Engineer','Product Manager'],datasets:[{label:'Match %25',data:[94,91,86],backgroundColor:'rgba(99,102,241,0.5)'}]}})`,
+        `The tech industry in India is growing at 35%+ annually. Your analytical scores are strong! Check out your profile radar: ![](https://quickchart.io/chart?c={type:'radar',data:{labels:['Analytical','Creative','Social','Tech','Leadership'],datasets:[{label:'Your Profile',data:[85,60,70,90,75]}]}})`,
+        `For a student interested in healthcare, roles like Health Informatics are great. Want me to outline the roadmap?`,
       ];
       const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
       await new Promise(r => setTimeout(r, 1000));
@@ -22,12 +20,18 @@ router.post('/', async (req, res) => {
     }
 
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const profile = userProfile?.profile || {};
 
-    const systemPrompt = `You are an expert AI Career Advisor on the PathFinder AI platform. You help students in India discover career opportunities beyond the typical 8-10 mainstream options. You have knowledge of 250+ career paths across Technology, Healthcare, Business, Arts & Design, Science & Engineering, and Education. 
+    const systemPrompt = `You are an expert AI Career Advisor on the PathFinder AI platform. 
+    Student Profile:
+    - Name: ${userProfile?.name || 'Student'}
+    - Personality: ${profile.personality || 'Unknown'}
+    - Aptitude Scores: Analytical(${profile.analyticalScore || 50}), Creative(${profile.creativeScore || 50}), Social(${profile.socialScore || 50}), Technical(${profile.technicalScore || 50}), Leadership(${profile.leadershipScore || 50})
     
-The student's profile: Name: ${userProfile?.name || 'Student'}, Email: ${userProfile?.email || 'N/A'}.
-
-Keep your responses concise (2-4 sentences), warm, and actionable. Always end with a follow-up question or suggestion to keep the conversation going.`;
+    If the student asks for a "chart" or "visualisation" or "graph", you can generate a QuickChart image URL in standard markdown format: ![](https://quickchart.io/chart?c={CONFIG})
+    Example config for a bar chart: {type:'bar',data:{labels:['A','B'],datasets:[{label:'Score',data:[10,20]}]}}
+    
+    Keep responses concise and warm. Always end with a follow-up question.`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',

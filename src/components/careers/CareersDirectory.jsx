@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mockPathways } from '../../services/mockData';
 import Card from '../ui/Card';
-import { Search, Briefcase, TrendingUp, Award, ChevronRight, ArrowRight } from 'lucide-react';
+import { Search, Briefcase, TrendingUp, ChevronRight, Loader2, ChevronLeft } from 'lucide-react';
 
 const CATEGORY_COLORS = {
   Technology: { bg: 'rgba(99,102,241,0.1)', text: 'var(--accent-color)', border: 'rgba(99,102,241,0.25)' },
@@ -16,6 +15,7 @@ const CATEGORY_COLORS = {
   Education: { bg: 'rgba(20,184,166,0.1)', text: '#14b8a6', border: 'rgba(20,184,166,0.25)' },
   Science: { bg: 'rgba(234,179,8,0.1)', text: '#eab308', border: 'rgba(234,179,8,0.25)' },
   Media: { bg: 'rgba(236,72,153,0.1)', text: '#ec4899', border: 'rgba(236,72,153,0.25)' },
+  Mixed: { bg: 'rgba(255,255,255,0.05)', text: 'var(--text-secondary)', border: 'var(--glass-border)' },
 };
 
 const DEMAND_COLORS = {
@@ -30,23 +30,55 @@ const ALL_CATEGORIES = ['All', 'Technology', 'Finance', 'Business', 'Healthcare'
 const CareersDirectory = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [careers, setCareers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
-  const careersArray = Object.keys(mockPathways).map(key => ({
-    id: key,
-    ...mockPathways[key]
-  }));
+  // 1. Debounce Search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setPage(1); // Reset to first page on search
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
-  const filteredCareers = careersArray.filter(career => {
-    const matchSearch = !searchTerm ||
-      career.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      career.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (career.skills || []).some(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchCategory = selectedCategory === 'All' || career.category === selectedCategory;
-    return matchSearch && matchCategory;
-  });
+  // 2. Fetch Data from Server
+  const fetchCareers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page,
+        limit: 12,
+        lean: true,
+        q: debouncedSearch,
+        category: selectedCategory === 'All' ? '' : selectedCategory
+      });
 
-  const existingCategories = ALL_CATEGORIES.filter(cat => cat === 'All' || careersArray.some(c => c.category === cat));
+      const res = await fetch(`/api/careers?${params.toString()}`);
+      const result = await res.json();
+      
+      if (res.ok) {
+        setCareers(result.data || []);
+        setTotal(result.total || 0);
+        setPages(result.pages || 1);
+      }
+    } catch (err) {
+      console.error('Failed to fetch careers:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, debouncedSearch, selectedCategory]);
+
+  useEffect(() => {
+    fetchCareers();
+  }, [fetchCareers]);
+
+  const existingCategories = ALL_CATEGORIES; // Use full list for filter UI
 
   return (
     <div style={{ maxWidth: '1200px', margin: '40px auto', padding: '0 32px 60px' }}>
@@ -54,7 +86,7 @@ const CareersDirectory = () => {
       <div className="animate-fade-in" style={{ textAlign: 'center', marginBottom: '40px' }}>
         <h1 className="text-gradient animate-slide-up" style={{ marginBottom: '12px', fontSize: '2.2rem' }}>Explore Real Indian Careers</h1>
         <p className="animate-slide-up delay-100" style={{ fontSize: '1.05rem', maxWidth: '600px', margin: '0 auto 32px', lineHeight: 1.7 }}>
-          Browse 25 real, in-demand career pathways with accurate salary ranges, top Indian companies, and step-by-step roadmaps.
+          Browse {careers.length}+ real, in-demand career pathways with accurate salary ranges, top Indian companies, and step-by-step roadmaps.
         </p>
 
         {/* Search */}
@@ -72,44 +104,52 @@ const CareersDirectory = () => {
         </div>
       </div>
 
-      {/* Category filter chips */}
-      <div className="animate-fade-in delay-300" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '32px', justifyContent: 'center' }}>
-        {existingCategories.map(cat => {
-          const cc = CATEGORY_COLORS[cat] || CATEGORY_COLORS.Technology;
-          const active = selectedCategory === cat;
-          return (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={active ? 'btn-ripple' : 'hover-lift'}
-              style={{
-                padding: '7px 18px', borderRadius: '50px', cursor: 'pointer', fontSize: '0.85rem', transition: 'all 0.2s', fontWeight: active ? 600 : 400,
-                border: active ? `1px solid ${cat === 'All' ? 'var(--accent-color)' : cc.border}` : '1px solid var(--glass-border)',
-                background: active ? (cat === 'All' ? 'rgba(99,102,241,0.15)' : cc.bg) : 'transparent',
-                color: active ? (cat === 'All' ? 'var(--accent-color)' : cc.text) : 'var(--text-secondary)',
-              }}
-            >{cat === 'All' ? `All (${careersArray.length})` : cat}</button>
-          );
-        })}
-      </div>
+      {loading ? (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '300px', gap: '16px' }}>
+          <Loader2 className="animate-spin" size={40} color="var(--accent-color)" />
+          <p style={{ color: 'var(--text-secondary)' }}>Loading 250+ career paths...</p>
+        </div>
+      ) : (
+        <>
+          {/* Category filter chips */}
+          <div className="animate-fade-in delay-300" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '32px', justifyContent: 'center' }}>
+            {existingCategories.map(cat => {
+              const cc = CATEGORY_COLORS[cat] || CATEGORY_COLORS.Mixed;
+              const active = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={active ? 'btn-ripple' : 'hover-lift'}
+                  style={{
+                    padding: '7px 18px', borderRadius: '50px', cursor: 'pointer', fontSize: '0.85rem', transition: 'all 0.2s', fontWeight: active ? 600 : 400,
+                    border: active ? `1px solid ${cat === 'All' ? 'var(--accent-color)' : cc.border}` : '1px solid var(--glass-border)',
+                    background: active ? (cat === 'All' ? 'rgba(99,102,241,0.15)' : cc.bg) : 'transparent',
+                    color: active ? (cat === 'All' ? 'var(--accent-color)' : cc.text) : 'var(--text-secondary)',
+                  }}
+                >{cat === 'All' ? `All (${careers.length})` : cat}</button>
+              );
+            })}
+          </div>
 
-      {/* Results count */}
-      <div className="animate-fade-in delay-400" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
-          Showing <strong style={{ color: 'white' }}>{filteredCareers.length}</strong> career{filteredCareers.length !== 1 ? 's' : ''}
-          {selectedCategory !== 'All' && ` in ${selectedCategory}`}
-        </p>
-        {selectedCategory !== 'All' && (
-          <button onClick={() => setSelectedCategory('All')} style={{ fontSize: '0.82rem', color: 'var(--accent-color)', background: 'none', border: 'none', cursor: 'pointer' }}>
-            Clear filter ✕
-          </button>
-        )}
-      </div>
+          {/* Results count */}
+          <div className="animate-fade-in delay-400" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+              {loading ? 'Searching...' : (
+                <>Showing <strong style={{ color: 'white' }}>{total}</strong> career{total !== 1 ? 's' : ''} {selectedCategory !== 'All' && ` in ${selectedCategory}`}</>
+              )}
+            </p>
+            {selectedCategory !== 'All' && (
+              <button onClick={() => setSelectedCategory('All')} style={{ fontSize: '0.82rem', color: 'var(--accent-color)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                Clear filter ✕
+              </button>
+            )}
+          </div>
 
-      {/* Career cards grid */}
-      <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-        {filteredCareers.map((career, idx) => {
-          const cc = CATEGORY_COLORS[career.category] || CATEGORY_COLORS.Technology;
+          {/* Career cards grid */}
+          <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            {careers.map((career, idx) => {
+              const cc = CATEGORY_COLORS[career.category] || CATEGORY_COLORS.Mixed;
           const demandColor = DEMAND_COLORS[career.demand] || 'var(--accent-color)';
           return (
             <Card key={career.id} glass className="animate-slide-up hover-lift" style={{ display: 'flex', flexDirection: 'column', padding: '26px' }}>
@@ -159,13 +199,40 @@ const CareersDirectory = () => {
         })}
       </div>
 
-      {filteredCareers.length === 0 && (
-        <div className="animate-fade-in" style={{ textAlign: 'center', padding: '80px 20px' }}>
-          <Briefcase size={48} color="var(--text-secondary)" style={{ marginBottom: '16px', opacity: 0.5 }} />
-          <h3 style={{ marginBottom: '8px' }}>No careers found</h3>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>Try a different search or category filter.</p>
-          <button className="btn-secondary" onClick={() => { setSearchTerm(''); setSelectedCategory('All'); }}>Clear all filters</button>
-        </div>
+          {/* Pagination Controls */}
+          {pages > 1 && (
+            <div style={{ marginTop: '48px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '24px' }}>
+              <button 
+                disabled={page === 1}
+                onClick={() => setPage(p => p - 1)}
+                className="btn-secondary" 
+                style={{ padding: '10px 18px', opacity: page === 1 ? 0.5 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}
+              >
+                <ChevronLeft size={18} /> Previous
+              </button>
+              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                Page <strong style={{ color: 'white' }}>{page}</strong> of {pages}
+              </div>
+              <button 
+                disabled={page === pages}
+                onClick={() => setPage(p => p + 1)}
+                className="btn-secondary" 
+                style={{ padding: '10px 18px', opacity: page === pages ? 0.5 : 1, cursor: page === pages ? 'not-allowed' : 'pointer' }}
+              >
+                Next <ChevronRight size={18} />
+              </button>
+            </div>
+          )}
+
+          {careers.length === 0 && !loading && (
+            <div className="animate-fade-in" style={{ textAlign: 'center', padding: '80px 20px' }}>
+              <Briefcase size={48} color="var(--text-secondary)" style={{ marginBottom: '16px', opacity: 0.5 }} />
+              <h3 style={{ marginBottom: '8px' }}>No careers found</h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>Try a different search or category filter.</p>
+              <button className="btn-secondary" onClick={() => { setSearchTerm(''); setSelectedCategory('All'); }}>Clear all filters</button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

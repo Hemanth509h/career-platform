@@ -82,6 +82,9 @@ const HeroSection = () => {
             <Link id="hero-explore-btn" to="/careers" className="btn-secondary" style={{ padding: '16px 40px', fontSize: '1.05rem', textDecoration: 'none' }}>
               Explore Careers
             </Link>
+            <Link to="/parent-signup" className="btn-secondary" style={{ padding: '16px 40px', fontSize: '1.05rem', textDecoration: 'none', borderColor: 'rgba(234,179,8,0.4)', color: '#eab308' }}>
+              For Parents <Users size={20} style={{ marginLeft: '8px' }} />
+            </Link>
           </div>
         </AnimateOnScroll>
 

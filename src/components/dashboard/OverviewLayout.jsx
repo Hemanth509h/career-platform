@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Brain, Target, Lightbulb, BookOpen, TrendingUp, ChevronRight, Briefcase, Zap, LayoutDashboard, ArrowRight, Map } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { Brain, Target, Lightbulb, BookOpen, TrendingUp, ChevronRight, Briefcase, Zap, LayoutDashboard, ArrowRight, Map, MessageSquare } from 'lucide-react';
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -16,10 +17,7 @@ import {
 } from 'chart.js';
 import { Radar, Doughnut, Bar } from 'react-chartjs-2';
 import Card from '../ui/Card';
-import { useAuth } from '../../context/AuthContext';
-import { mockUser } from '../../services/mockData';
-import { allCourses } from '../../services/courseData';
-import { Star, Clock, Trophy } from 'lucide-react';
+import { Star, Clock, Trophy, Bookmark } from 'lucide-react';
 
 ChartJS.register(
   RadialLinearScale, PointElement, LineElement, Filler,
@@ -152,6 +150,12 @@ const OverviewLayout = () => {
   const [aiResult, setAiResult] = useState(null);
   const [expandedCareer, setExpandedCareer] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [feedback, setFeedback] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [savedCareers, setSavedCareers] = useState([]);
+  const [selectedCareers, setSelectedCareers] = useState([]);
+
+  const isNewUser = location.state?.isNewUser || !aiResult;
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -177,6 +181,8 @@ const OverviewLayout = () => {
             setAiResult(syncedResult);
             localStorage.setItem('aiResult', JSON.stringify(syncedResult));
           }
+          if (userData.savedCareers) setSavedCareers(userData.savedCareers);
+          if (userData.selectedCareers) setSelectedCareers(userData.selectedCareers);
         }
       } catch (err) {
         console.error('Failed to sync user data:', err);
@@ -198,7 +204,75 @@ const OverviewLayout = () => {
       // Still fetch to ensure sync
       fetchUserData();
     }
-  }, [location.state]);
+    if (user?.isMinor) {
+      const token = localStorage.getItem('token');
+      fetch('/api/student/feedback', { 
+        headers: { 'Authorization': `Bearer ${token}` } 
+      })
+      .then(r => r.json())
+      .then(d => setFeedback(Array.isArray(d) ? d : []))
+      .catch(() => {});
+    }
+
+    // Fetch all courses for matching (handle paginated response)
+    fetch('/api/courses?limit=100')
+      .then(r => r.json())
+      .then(result => {
+        const data = Array.isArray(result) ? result : (result?.data || []);
+        setCourses(data);
+      })
+      .catch(err => console.error('Error fetching courses:', err));
+
+    // Fetch saved/selected
+    const fetchPersistence = () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const headers = { 'Authorization': `Bearer ${token}` };
+      fetch('/api/student/saved-careers', { headers }).then(r => r.json()).then(d => setSavedCareers(Array.isArray(d) ? d : [])).catch(() => {});
+      fetch('/api/student/selected-careers', { headers }).then(r => r.json()).then(d => setSelectedCareers(Array.isArray(d) ? d : [])).catch(() => {});
+    };
+
+    fetchPersistence();
+  }, [location.state, user]);
+
+  const handleSave = async (e, careerId) => {
+    e.stopPropagation();
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    const isSaved = savedCareers.some(c => c.id === careerId);
+    // Simple toggle: currently only supports "Save" as per existing route structure. 
+    // Ideally we should have an "unsave" route, but for now we'll just re-push.
+    const res = await fetch('/api/student/save-career', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ careerId })
+    });
+    if (res.ok) {
+      // Re-fetch to sync
+      const updated = await fetch('/api/student/saved-careers', { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json());
+      setSavedCareers(Array.isArray(updated) ? updated : []);
+    }
+  };
+
+  const handleSelect = async (e, careerId) => {
+    e.stopPropagation();
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    const res = await fetch('/api/student/select-career', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ careerId })
+    });
+    if (res.ok) {
+      const updated = await fetch('/api/student/selected-careers', { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json());
+      setSelectedCareers(Array.isArray(updated) ? updated : []);
+    } else {
+      const err = await res.json();
+      alert(err.message || 'Error selecting career');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -209,21 +283,49 @@ const OverviewLayout = () => {
     );
   }
 
-  const profile = aiResult?.profile || mockUser.profile;
-  const matches = aiResult?.careerMatches || mockUser.careerMatches;
+  const profile = aiResult?.profile || (user?.profile || {});
+  const matches = aiResult?.careerMatches || [];
   const topMatch = matches?.[0];
 
   if (!aiResult) {
     return (
-      <div style={{ maxWidth: '700px', margin: '80px auto', padding: '0 20px', textAlign: 'center' }}>
-        <div style={{ width: '64px', height: '64px', margin: '0 auto 24px', borderRadius: '32px', background: 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <LayoutDashboard size={30} color="white" />
+      <div style={{ maxWidth: '800px', margin: '60px auto', padding: '0 24px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+        <div className="orb orb-1" style={{ top: '-20%', left: '20%' }} />
+        
+        <Card glass style={{ padding: '60px 40px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.1)' }} className="animate-pop-in">
+          <div style={{ width: '80px', height: '80px', margin: '0 auto 28px', borderRadius: '24px', background: 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 12px 30px rgba(99,102,241,0.3)' }}>
+            <Brain size={40} color="white" />
+          </div>
+          
+          <h1 className="text-gradient" style={{ fontSize: '2.5rem', marginBottom: '16px', fontWeight: 900 }}>Welcome to Your Future, {user?.name?.split(' ')[0]}!</h1>
+          <p style={{ fontSize: '1.15rem', lineHeight: 1.7, color: 'var(--text-secondary)', marginBottom: '40px', maxWidth: '600px', margin: '0 auto 40px' }}>
+            To provide you with a high-fidelity career roadmap, we need to understand your unique strengths and interests. 
+            Take our 20-question AI discovery test to see your personalized matches.
+          </p>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
+            <Link to="/assessments" className="btn-primary" style={{ padding: '18px 48px', fontSize: '1.1rem', textDecoration: 'none', borderRadius: '16px', fontWeight: 700, boxShadow: '0 8px 25px rgba(99, 102, 241, 0.4)' }}>
+              Start Discovery Assessment <ArrowRight style={{ marginLeft: '10px' }} size={20} />
+            </Link>
+            
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>⏱️ Takes about 4-5 minutes • 25 real-world career paths analyzed</p>
+          </div>
+        </Card>
+
+        {/* Features Preview */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginTop: '48px' }}>
+          {[
+            { icon: <Target size={20} />, title: 'Skill Roadmap', desc: 'Step-by-step guides' },
+            { icon: <TrendingUp size={20} />, title: 'Market Insights', desc: 'Real Indian salary data' },
+            { icon: <BookOpen size={20} />, title: 'Course Paths', desc: 'Curated learning resources' }
+          ].map((f, i) => (
+            <div key={i} style={{ padding: '20px', borderRadius: '20px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)' }}>
+              <div style={{ color: 'var(--accent-color)', marginBottom: '8px' }}>{f.icon}</div>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '4px' }}>{f.title}</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{f.desc}</div>
+            </div>
+          ))}
         </div>
-        <h1 className="text-gradient" style={{ marginBottom: '16px' }}>Your Dashboard</h1>
-        <p style={{ lineHeight: 1.7, marginBottom: '28px' }}>Take the assessment to see your personalised career matches, roadmaps, and course recommendations.</p>
-        <Link to="/assessments" className="btn-primary" style={{ padding: '14px 32px', fontSize: '1rem', textDecoration: 'none' }}>
-          Take Assessment <ArrowRight size={18} />
-        </Link>
       </div>
     );
   }
@@ -237,7 +339,7 @@ const OverviewLayout = () => {
       {/* Welcome banner */}
       <div className="glass-panel" style={{ padding: '28px 36px', marginBottom: '32px', background: 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.08))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', position: 'relative', zIndex: 1 }}>
         <div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--accent-color)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Welcome back</div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--accent-color)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>{isNewUser ? 'Welcome' : 'Welcome back'}</div>
           <h1 style={{ margin: '0 0 6px', fontSize: '1.8rem' }}>Hey, {user?.name?.split(' ')[0] || 'there'} 👋</h1>
           <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Your 6-dimension career profile is ready. Here are your personalised Indian career matches.</p>
         </div>
@@ -302,14 +404,31 @@ const OverviewLayout = () => {
 
       {/* ── CHARTS ROW ── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '20px', marginBottom: '32px', position: 'relative', zIndex: 1 }}>
-        {/* Radar chart */}
+        {/* AI Insight Card / Radar chart */}
         <Card glass style={{ padding: '24px' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--accent-color)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Brain size={13} /> 6-Dimension Profile
+          <div style={{ fontSize: '0.75rem', color: 'var(--accent-color)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Brain size={13} /> AI Insights Profile</div>
+            {profile.visualSummaryUrl && (
+              <a href={profile.visualSummaryUrl} target="_blank" rel="noreferrer" style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textDecoration: 'none', border: '1px solid var(--glass-border)', padding: '2px 8px', borderRadius: '4px' }}>
+                Open Chart ↗
+              </a>
+            )}
           </div>
-          <div style={{ maxWidth: '280px', margin: '0 auto' }}>
-            <ProfileRadar profile={profile} />
-          </div>
+          
+          {profile.visualSummaryUrl ? (
+             <div style={{ textAlign: 'center' }}>
+               <img 
+                 src={profile.visualSummaryUrl} 
+                 alt="AI Profile Summary" 
+                 style={{ maxWidth: '100%', height: 'auto', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', padding: '10px' }} 
+               />
+               <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '12px' }}>This chart was dynamically generated for your results.</p>
+             </div>
+          ) : (
+            <div style={{ maxWidth: '280px', margin: '0 auto' }}>
+              <ProfileRadar profile={profile} />
+            </div>
+          )}
         </Card>
 
         {/* Horizontal bar chart */}
@@ -372,10 +491,34 @@ const OverviewLayout = () => {
 
                 {/* Action buttons */}
                 <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                  <button 
+                    onClick={(e) => handleSave(e, career.id)}
+                    className="btn-secondary" 
+                    title="Save for Later"
+                    style={{ 
+                      padding: '7px 10px', 
+                      background: savedCareers.some(c => c.id === career.id) ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.06)',
+                      borderColor: savedCareers.some(c => c.id === career.id) ? 'var(--accent-color)' : 'var(--glass-border)'
+                    }}
+                  >
+                    <Bookmark size={13} fill={savedCareers.some(c => c.id === career.id) ? 'var(--accent-color)' : 'none'} color={savedCareers.some(c => c.id === career.id) ? 'var(--accent-color)' : 'var(--text-secondary)'} />
+                  </button>
+                  <button 
+                    onClick={(e) => handleSelect(e, career.id)}
+                    className="btn-secondary" 
+                    title="Mark as Goal"
+                    style={{ 
+                      padding: '7px 10px',
+                      background: selectedCareers.some(c => c.id === career.id) ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)',
+                      borderColor: selectedCareers.some(c => c.id === career.id) ? 'var(--warning-color)' : 'var(--glass-border)'
+                    }}
+                  >
+                    <Star size={13} fill={selectedCareers.some(c => c.id === career.id) ? 'var(--warning-color)' : 'none'} color={selectedCareers.some(c => c.id === career.id) ? 'var(--warning-color)' : 'var(--text-secondary)'} />
+                  </button>
                   <Link to={`/career-pathway/${career.id}`} className="btn-secondary" style={{ padding: '7px 14px', fontSize: '0.8rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }} onClick={e => e.stopPropagation()}>
                     <Map size={13} /> Roadmap
                   </Link>
-                  <Link to="/courses" className="btn-primary" style={{ padding: '7px 14px', fontSize: '0.8rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }} onClick={e => e.stopPropagation()}>
+                  <Link to={`/courses?careerId=${career.id}`} className="btn-primary" style={{ padding: '7px 14px', fontSize: '0.8rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }} onClick={e => e.stopPropagation()}>
                     <BookOpen size={13} /> Courses
                   </Link>
                 </div>
@@ -419,8 +562,8 @@ const OverviewLayout = () => {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-            {allCourses
-              .filter(c => c.relatedCareers.includes(topMatch.id))
+            {courses
+              .filter(c => c.relatedCareers && c.relatedCareers.includes(topMatch.id))
               .slice(0, 3)
               .map((course, cIdx) => (
                 <Card key={course.id} glass style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
@@ -458,6 +601,62 @@ const OverviewLayout = () => {
         </div>
       )}
 
+      {/* Saved & Selected Sections */}
+      {(savedCareers.length > 0 || selectedCareers.length > 0) && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '32px', marginBottom: '32px', position: 'relative', zIndex: 1 }}>
+          {selectedCareers.length > 0 && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                <Star size={18} color="var(--warning-color)" fill="var(--warning-color)" />
+                <h2 style={{ margin: 0, fontSize: '1.2rem' }}>Selected Goals</h2>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {selectedCareers.map(c => (
+                  <div key={c.id} className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{c.title}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{c.category} • {c.salary}</div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <Link to={`/career-pathway/${c.id}`} style={{ padding: '6px 12px', fontSize: '0.75rem' }} className="btn-secondary">
+                         Roadmap
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {savedCareers.length > 0 && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                <Bookmark size={18} color="var(--accent-color)" fill="var(--accent-color)" />
+                <h2 style={{ margin: 0, fontSize: '1.2rem' }}>Saved for Later</h2>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {savedCareers.slice(0, 4).map(c => (
+                  <div key={c.id} className="glass-panel" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{c.title}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{c.salary}</div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <Link to={`/courses?careerId=${c.id}`} style={{ padding: '6px 12px', fontSize: '0.75rem' }} className="btn-primary">
+                         Courses
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+                {savedCareers.length > 4 && (
+                   <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textAlign: 'right' }}>+ {savedCareers.length - 4} more saved</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Quick navigation cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', position: 'relative', zIndex: 1 }}>
         {[
@@ -478,6 +677,34 @@ const OverviewLayout = () => {
           </Link>
         ))}
       </div>
+
+      {/* Parent Feedback Section for Minors */}
+      {user?.isMinor && (
+        <div style={{ marginTop: '48px', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+            <MessageSquare size={22} color="#eab308" />
+            <h2 style={{ margin: 0, fontSize: '1.4rem' }}>Parent Feedback & Guidance</h2>
+          </div>
+          
+          {feedback.length === 0 ? (
+            <Card glass style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+              No messages from your parent yet. They will appear here once your parent reviews your progress.
+            </Card>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {feedback.map((f, i) => (
+                <div key={i} className="glass-panel animate-slide-up" style={{ background: 'rgba(234,179,8,0.06)', border: '1px solid rgba(234,179,8,0.2)', borderRadius: '20px', padding: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                    <span style={{ color: '#eab308', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Message from Guardian</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{new Date(f.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <p style={{ color: 'white', lineHeight: 1.7, margin: 0, fontSize: '1rem' }}>{f.message}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

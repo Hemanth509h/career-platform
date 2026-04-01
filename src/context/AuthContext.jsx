@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(data.user));
       setIsAuthenticated(true);
       setUser(data.user);
-      return { success: true };
+      return { success: true, user: data.user };
     } catch (err) {
       setError(err.message);
       return { success: false, error: err.message };
@@ -49,14 +49,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (name, email, password) => {
+  const register = async (name, email, password, dob) => {
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, email, password, dob })
       });
       const contentType = res.headers.get('content-type');
       let data = {};
@@ -64,15 +64,51 @@ export const AuthProvider = ({ children }) => {
         data = await res.json();
       } else {
         const text = await res.text();
-        throw new Error(`Server error: Received non-JSON response. Please ensure the backend server is running on port 3001.`);
+        throw new Error(`Server error: Received non-JSON response.`);
       }
       
       if (!res.ok) throw new Error(data.message || 'Registration failed');
+      
+      if (data.user.isMinor && !data.user.parentLinked) {
+        // Return without logging in
+        return { success: true, user: data.user, requireParentLink: true };
+      }
+
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setIsAuthenticated(true);
       setUser(data.user);
-      return { success: true };
+      return { success: true, user: data.user };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const linkParent = async (parentCode, name, email, password) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_URL}/auth/link-parent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ parentCode, name, email, password })
+      });
+      let data = {};
+      if (res.headers.get('content-type')?.includes('application/json')) {
+        data = await res.json();
+      } else {
+        throw new Error(`Server error: Received non-JSON response.`);
+      }
+      
+      if (!res.ok) throw new Error(data.message || 'Linking failed');
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setIsAuthenticated(true);
+      setUser(data.user);
+      return { success: true, user: data.user };
     } catch (err) {
       setError(err.message);
       return { success: false, error: err.message };
@@ -85,6 +121,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('profileContext');
+    localStorage.removeItem('aiResult');
     setIsAuthenticated(false);
     setUser(null);
   };
@@ -96,6 +133,7 @@ export const AuthProvider = ({ children }) => {
     error,
     login,
     register,
+    linkParent,
     logout
   };
 
