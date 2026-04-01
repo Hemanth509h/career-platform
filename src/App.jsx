@@ -5,6 +5,7 @@ import AssessmentWizard from './components/assessments/AssessmentWizard';
 import OverviewLayout from './components/dashboard/OverviewLayout';
 import CareerPathway from './components/careers/CareerPathway';
 import CareersDirectory from './components/careers/CareersDirectory';
+import CourseRecommendations from './components/courses/CourseRecommendations';
 import AIChatbot from './components/chat/AIChatbot';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -25,12 +26,14 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/careers" element={<CareersDirectory />} />
-              
+
               {/* Protected Routes */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/assessments" element={<AssessmentWizard />} />
                 <Route path="/dashboard" element={<OverviewLayout />} />
                 <Route path="/career-pathway/:id" element={<CareerPathway />} />
+                <Route path="/courses" element={<CourseRecommendations />} />
+                <Route path="/courses/:careerId" element={<CourseRecommendations />} />
               </Route>
             </Routes>
           </main>

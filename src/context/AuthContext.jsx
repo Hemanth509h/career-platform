@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext } from 'react';
 
 const AuthContext = createContext();
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = '/api';
 
 export const useAuth = () => {
   return useContext(AuthContext);
@@ -68,6 +68,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('profileContext');
     setIsAuthenticated(false);
     setUser(null);
   };
