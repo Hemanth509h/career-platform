@@ -3,82 +3,113 @@ import { GoogleGenAI } from '@google/genai';
 
 const router = express.Router();
 
-// Full career database for matching
+// Real Indian Career Database
 const CAREER_DATABASE = [
-  { id: "c1", title: "AI Product Manager", demand: "High", salary: "₹18L – ₹40L", category: "Technology", skills: ["Product Strategy", "AI/ML Basics", "Agile", "User Research"], description: "Bridge engineering and user needs to build intelligent software products." },
-  { id: "c2", title: "Data Scientist", demand: "Very High", salary: "₹12L – ₹35L", category: "Technology", skills: ["Python", "Statistics", "Machine Learning", "SQL"], description: "Extract insights from complex datasets and build predictive models." },
-  { id: "c3", title: "UX Researcher", demand: "High", salary: "₹8L – ₹22L", category: "Design", skills: ["User Research", "Figma", "Usability Testing", "Analytics"], description: "Understand user behavior to create intuitive digital experiences." },
-  { id: "c4", title: "Sustainability Consultant", demand: "High", salary: "₹10L – ₹25L", category: "Science", skills: ["ESG Analysis", "Carbon Accounting", "Policy", "Systems Thinking"], description: "Help organizations reduce environmental impact and meet climate targets." },
-  { id: "c5", title: "Biomedical Engineer", demand: "High", salary: "₹8L – ₹20L", category: "Healthcare", skills: ["Biology", "Engineering", "Medical Devices", "R&D"], description: "Design medical devices and equipment to improve patient outcomes." },
-  { id: "c6", title: "Health Informatics Specialist", demand: "High", salary: "₹9L – ₹22L", category: "Healthcare", skills: ["EHR Systems", "Clinical Data", "HL7 FHIR", "Healthcare IT"], description: "Manage clinical data systems to improve healthcare delivery." },
-  { id: "c7", title: "EdTech Product Designer", demand: "Medium", salary: "₹7L – ₹18L", category: "Education", skills: ["Instructional Design", "LMS Platforms", "UX", "Curriculum"], description: "Design digital learning experiences that make education more effective." },
-  { id: "c8", title: "Renewable Energy Engineer", demand: "Very High", salary: "₹9L – ₹24L", category: "Science", skills: ["Solar/Wind Tech", "Grid Systems", "Power Electronics", "AutoCAD"], description: "Design and implement clean energy systems for a sustainable future." },
-  { id: "c9", title: "Cybersecurity Analyst", demand: "Very High", salary: "₹10L – ₹30L", category: "Technology", skills: ["Network Security", "Ethical Hacking", "SIEM", "Risk Assessment"], description: "Protect digital infrastructure from cyber threats and breaches." },
-  { id: "c10", title: "Financial Analyst", demand: "High", salary: "₹8L – ₹24L", category: "Business", skills: ["Financial Modelling", "Excel", "Valuation", "Research"], description: "Analyse financial data to guide investment decisions and business strategy." },
-  { id: "c11", title: "Cloud Solutions Architect", demand: "Very High", salary: "₹20L – ₹50L", category: "Technology", skills: ["AWS/Azure", "System Design", "Terraform", "DevOps"], description: "Design scalable cloud infrastructure for enterprise applications." },
-  { id: "c12", title: "Sports Analytics Specialist", demand: "Medium", salary: "₹6L – ₹18L", category: "Technology", skills: ["Data Analysis", "Sports Science", "Python", "Visualization"], description: "Use data to optimize athletic performance and team strategy." },
-  { id: "c13", title: "Full Stack Developer", demand: "Very High", salary: "₹10L – ₹40L", category: "Technology", skills: ["React", "Node.js", "Databases", "System Design"], description: "Build end-to-end web applications from UI to backend infrastructure." },
-  { id: "c14", title: "Growth Marketing Manager", demand: "High", salary: "₹10L – ₹30L", category: "Business", skills: ["SEO/SEM", "Analytics", "Content Strategy", "A/B Testing"], description: "Drive user acquisition and retention through data-driven marketing strategies." },
-  { id: "c15", title: "Actuarial Scientist", demand: "High", salary: "₹12L – ₹35L", category: "Business", skills: ["Statistics", "Risk Modelling", "Actuarial Exams", "Finance"], description: "Assess and manage financial risk using advanced statistical methods." },
-  { id: "c16", title: "Visual Designer", demand: "Medium", salary: "₹6L – ₹18L", category: "Design", skills: ["Adobe Suite", "Typography", "Brand Design", "Motion"], description: "Create compelling visual identities and design assets for brands." },
+  { id: "ind01", title: "Software Engineer", demand: "Very High", salary: "₹5L – ₹50L", category: "Technology", skills: ["DSA", "Java/Python", "System Design", "Git", "SQL"], description: "Design and build software powering India's IT sector and startup boom." },
+  { id: "ind02", title: "Data Scientist", demand: "Very High", salary: "₹8L – ₹45L", category: "Technology", skills: ["Python", "ML", "SQL", "Statistics", "Tableau"], description: "Extract insights from large datasets using statistics and machine learning." },
+  { id: "ind03", title: "AI / ML Engineer", demand: "Very High", salary: "₹12L – ₹65L", category: "Technology", skills: ["Deep Learning", "TensorFlow/PyTorch", "MLOps", "NLP", "Cloud"], description: "Build and deploy AI/ML systems for real-world products." },
+  { id: "ind04", title: "Cybersecurity Analyst", demand: "Very High", salary: "₹6L – ₹35L", category: "Technology", skills: ["Ethical Hacking", "SIEM", "Linux", "CEH", "Incident Response"], description: "Protect India's digital infrastructure from cyber threats." },
+  { id: "ind05", title: "Cloud Solutions Architect", demand: "Very High", salary: "₹15L – ₹60L", category: "Technology", skills: ["AWS/Azure/GCP", "Terraform", "Kubernetes", "DevOps", "System Design"], description: "Design and manage cloud infrastructure for enterprises and startups." },
+  { id: "ind06", title: "Chartered Accountant (CA)", demand: "High", salary: "₹7L – ₹40L", category: "Finance", skills: ["Ind AS", "GST", "Audit", "Corporate Law", "Tally ERP"], description: "India's premier finance qualification — audit, tax, and financial advisory." },
+  { id: "ind07", title: "Investment Banker", demand: "High", salary: "₹15L – ₹1Cr+", category: "Finance", skills: ["DCF/LBO Modelling", "Valuation", "M&A", "Capital Markets", "Excel"], description: "Facilitate IPOs, mergers, and capital raising for top Indian corporates." },
+  { id: "ind08", title: "Management Consultant", demand: "High", salary: "₹12L – ₹60L", category: "Business", skills: ["Problem Solving", "Case Frameworks", "Business Strategy", "Excel", "Data Analysis"], description: "Solve complex business problems for India's top firms (McKinsey, BCG, Bain)." },
+  { id: "ind09", title: "Digital Marketer", demand: "High", salary: "₹3L – ₹25L", category: "Business", skills: ["SEO/SEM", "Meta Ads", "Google Ads", "Analytics", "Content Strategy"], description: "Drive online growth for India's e-commerce, D2C, and startup ecosystem." },
+  { id: "ind10", title: "IAS / Civil Services Officer", demand: "Stable", salary: "₹7L – ₹18L + perks", category: "Government", skills: ["General Studies", "Essay Writing", "CSAT", "Current Affairs", "Ethics"], description: "India's most prestigious career — serve the nation through UPSC Civil Services." },
+  { id: "ind11", title: "Doctor (MBBS / MD)", demand: "Very High", salary: "₹8L – ₹1Cr+", category: "Healthcare", skills: ["Clinical Medicine", "Diagnosis", "Patient Care", "Pharmacology", "Surgery"], description: "India's most respected career — heal patients and specialise through MD/MS." },
+  { id: "ind12", title: "Physiotherapist", demand: "High", salary: "₹3L – ₹15L", category: "Healthcare", skills: ["Manual Therapy", "Exercise Prescription", "Sports Physio", "Neurological Rehab", "Assessment"], description: "Help patients recover from injuries, surgeries, and chronic conditions." },
+  { id: "ind13", title: "Civil Engineer", demand: "High", salary: "₹4L – ₹25L", category: "Engineering", skills: ["AutoCAD", "STAAD.Pro", "Structural Analysis", "Project Management", "IS Codes"], description: "Design India's roads, bridges, metros, and smart city infrastructure." },
+  { id: "ind14", title: "Mechanical Engineer", demand: "High", salary: "₹4L – ₹22L", category: "Engineering", skills: ["SolidWorks/CATIA", "Thermodynamics", "FEA (ANSYS)", "Manufacturing", "Six Sigma"], description: "Design machines and automotive systems powering India's manufacturing sector." },
+  { id: "ind15", title: "Architect", demand: "Medium", salary: "₹4L – ₹25L", category: "Design", skills: ["AutoCAD/Revit", "BIM", "Urban Design", "SketchUp", "Construction Tech"], description: "Design buildings and urban spaces shaping India's rapid urbanisation." },
+  { id: "ind16", title: "UX / UI Designer", demand: "High", salary: "₹5L – ₹30L", category: "Design", skills: ["Figma", "User Research", "Prototyping", "Interaction Design", "Design Systems"], description: "Design intuitive digital experiences for India's apps and fintech platforms." },
+  { id: "ind17", title: "Product Manager", demand: "Very High", salary: "₹12L – ₹55L", category: "Business", skills: ["Product Strategy", "SQL", "Agile", "User Research", "Stakeholder Mgmt"], description: "Drive product strategy and execution at India's unicorns and tech companies." },
+  { id: "ind18", title: "Corporate Lawyer", demand: "High", salary: "₹6L – ₹50L", category: "Law", skills: ["Contract Drafting", "Company Law", "SEBI Regulations", "M&A Law", "Legal Research"], description: "Advise on mergers, IPOs, and contracts for India's top corporates and law firms." },
+  { id: "ind19", title: "HR Manager", demand: "Medium", salary: "₹5L – ₹25L", category: "Business", skills: ["Talent Acquisition", "SAP SuccessFactors", "Labour Law", "L&D", "Employee Engagement"], description: "Manage talent and people strategy for India's leading organisations." },
+  { id: "ind20", title: "Environmental Scientist", demand: "High", salary: "₹4L – ₹18L", category: "Science", skills: ["EIA", "GIS (ArcGIS)", "ESG Reporting", "Environmental Law", "Air/Water Quality Analysis"], description: "Monitor pollution and drive India's sustainability and climate transition." },
+  { id: "ind21", title: "Teacher / Educator", demand: "High", salary: "₹3L – ₹20L", category: "Education", skills: ["Subject Expertise", "Curriculum Design", "EdTech Tools", "Assessment Design", "Communication"], description: "Shape the next generation as a school teacher, professor, or EdTech creator." },
+  { id: "ind22", title: "Financial Analyst", demand: "High", salary: "₹5L – ₹30L", category: "Finance", skills: ["Financial Modelling", "Excel", "Equity Research", "Valuation", "Power BI"], description: "Analyse financial data to guide investment decisions at banks and corporates." },
+  { id: "ind23", title: "Mobile App Developer", demand: "High", salary: "₹5L – ₹35L", category: "Technology", skills: ["Flutter/React Native", "Kotlin/Swift", "REST APIs", "Firebase", "App Store Deployment"], description: "Build apps for India's 800M+ smartphone users on Android and iOS." },
+  { id: "ind24", title: "DevOps / SRE Engineer", demand: "Very High", salary: "₹8L – ₹45L", category: "Technology", skills: ["Linux", "Docker/Kubernetes", "CI/CD", "Terraform", "Prometheus/Grafana"], description: "Bridge dev and ops to build reliable, scalable systems at Indian tech companies." },
+  { id: "ind25", title: "Journalist / Content Creator", demand: "Medium", salary: "₹3L – ₹20L", category: "Media", skills: ["Investigative Reporting", "Digital Storytelling", "Video Editing", "Social Media", "SEO for Content"], description: "Report stories and build audiences across digital media and social platforms in India." },
 ];
 
-// Generate smart mock recommendations based on assessment answers
-const generateMockRecommendations = (answers, profileContext) => {
-  const aptitudeScore = Object.values(answers).filter(v => v >= 4).length * 8 + 40;
-  const analyticalScore = ([1, 5, 8, 15].map(id => answers[id] || 3).reduce((a, b) => a + b, 0) / 4) / 5;
-  const creativeScore = ([9, 16, 18].map(id => answers[id] || 3).reduce((a, b) => a + b, 0) / 3) / 5;
-  const socialScore = ([3, 6, 14].map(id => answers[id] || 3).reduce((a, b) => a + b, 0) / 3) / 5;
-  const techScore = ([4, 12, 20].map(id => answers[id] || 3).reduce((a, b) => a + b, 0) / 3) / 5;
-  const leaderScore = ([2, 7, 3].map(id => answers[id] || 3).reduce((a, b) => a + b, 0) / 3) / 5;
+// Smart mock recommendations based on assessment profile
+const generateMockRecommendations = (answers = {}, profileContext = {}) => {
+  const vals = Object.values(answers);
+  const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 3;
+  const aptitudeScore = Math.min(98, Math.round(45 + avg * 10 + Math.random() * 8));
 
-  const scoredCareers = CAREER_DATABASE.map(career => {
-    let score = 70;
-    if (career.category === 'Technology') score += techScore * 20;
-    if (career.category === 'Design') score += creativeScore * 20;
-    if (career.category === 'Business') score += (analyticalScore + leaderScore) * 10;
-    if (career.category === 'Healthcare') score += socialScore * 20;
-    if (career.category === 'Science') score += analyticalScore * 15;
-    if (career.category === 'Education') score += socialScore * 15;
-    score = Math.min(98, Math.round(score + (Math.random() * 6 - 3)));
-    return { ...career, matchScore: score };
+  const analyticalQ = ['a1', 'a4', 'p1'].map(k => answers[k] || 3);
+  const analytical = analyticalQ.reduce((a, b) => a + b, 0) / analyticalQ.length / 5;
+  const creative = ['p5'].map(k => answers[k] || 3).reduce((a, b) => a + b) / 5;
+  const social = ['p2', 'p3'].map(k => answers[k] || 3).reduce((a, b) => a + b, 0) / 2 / 5;
+  const tech = ['a2', 'a3', 'l1'].map(k => answers[k] || 3).reduce((a, b) => a + b, 0) / 3 / 5;
+  const leadership = ['p3', 'p4'].map(k => answers[k] || 3).reduce((a, b) => a + b, 0) / 2 / 5;
+
+  const categoryScores = {
+    Technology: 0.5 + tech * 0.5,
+    Finance: 0.4 + analytical * 0.5,
+    Business: 0.4 + leadership * 0.4 + analytical * 0.2,
+    Design: 0.3 + creative * 0.6,
+    Healthcare: 0.3 + social * 0.6,
+    Engineering: 0.4 + analytical * 0.4 + tech * 0.2,
+    Government: 0.35 + leadership * 0.3,
+    Education: 0.3 + social * 0.5,
+    Law: 0.3 + analytical * 0.3 + leadership * 0.2,
+    Science: 0.35 + analytical * 0.4,
+    Media: 0.25 + creative * 0.5,
+  };
+
+  const interests = profileContext.interests || [];
+  const interestBoost = { Technology: 0, Finance: 0, Business: 0, Design: 0, Healthcare: 0, Engineering: 0, Government: 0, Education: 0, Law: 0, Science: 0, Media: 0 };
+  interests.forEach(i => {
+    if (i.includes('Tech') || i.includes('Software')) interestBoost.Technology += 0.15;
+    if (i.includes('Data') || i.includes('Analytics')) { interestBoost.Technology += 0.1; interestBoost.Finance += 0.05; }
+    if (i.includes('Design') || i.includes('Creat')) interestBoost.Design += 0.2;
+    if (i.includes('Health') || i.includes('Medic')) interestBoost.Healthcare += 0.2;
+    if (i.includes('Business') || i.includes('Finance')) { interestBoost.Finance += 0.15; interestBoost.Business += 0.1; }
+    if (i.includes('Engi') || i.includes('Science')) interestBoost.Engineering += 0.15;
+    if (i.includes('Edu') || i.includes('Teach')) interestBoost.Education += 0.2;
+    if (i.includes('Social') || i.includes('Impact') || i.includes('NGO')) { interestBoost.Government += 0.1; interestBoost.Education += 0.1; }
+  });
+
+  const scored = CAREER_DATABASE.map(c => {
+    const catScore = (categoryScores[c.category] || 0.4) + (interestBoost[c.category] || 0);
+    const score = Math.min(97, Math.max(55, Math.round(catScore * 100 + (Math.random() * 8 - 4))));
+    return { ...c, matchScore: score };
   }).sort((a, b) => b.matchScore - a.matchScore).slice(0, 5);
 
-  const interests = profileContext?.interests || [];
-  let personality = 'Analytical Thinker (INTP)';
-  if (creativeScore > 0.7) personality = 'Creative Visionary (INFP)';
-  else if (leaderScore > 0.7) personality = 'Strategic Leader (ENTJ)';
-  else if (socialScore > 0.7) personality = 'Empathetic Connector (ENFJ)';
-  else if (techScore > 0.7) personality = 'Systematic Engineer (ISTJ)';
-
   const explanations = {
-    Technology: "Your strong analytical aptitude and tech interest scores suggest you thrive in structured problem-solving environments.",
-    Design: "Your creative expression and visual thinking scores align closely with design-focused roles.",
-    Business: "Your leadership tendencies and risk tolerance indicate strong business acumen.",
-    Healthcare: "Your high empathy and social orientation scores match the service-driven nature of healthcare.",
-    Science: "Your curiosity-driven thinking and systematic approach suits scientific research careers.",
-    Education: "Your strong communication ability and passion for helping others fits education perfectly."
+    Technology: `Your strong analytical aptitude (${aptitudeScore}%) and tech interest scores point to high alignment with tech careers.`,
+    Finance: `Your structured thinking and numerical ability suggest a natural fit with finance and accounting roles.`,
+    Business: `Your leadership orientation and problem-solving mindset align with strategy and consulting careers.`,
+    Design: `Your creative expression scores and visual thinking patterns match design-led roles.`,
+    Healthcare: `Your empathy scores and service orientation are ideal for patient-facing healthcare careers.`,
+    Engineering: `Your systematic reasoning and physics/math strengths align with core engineering fields.`,
+    Government: `Your social awareness and leadership scores align with public administration careers.`,
+    Education: `Your communication strength and social drive indicate excellent fit for educational roles.`,
+    Law: `Your structured reasoning and communication ability align well with legal practice.`,
+    Science: `Your analytical curiosity and research orientation fit science and R&D careers.`,
+    Media: `Your creative and communication skills match journalism and content creation.`,
   };
+
+  let personality = 'Analytical Thinker (INTJ)';
+  if (creative > 0.65) personality = 'Creative Visionary (INFP)';
+  else if (leadership > 0.65) personality = 'Strategic Leader (ENTJ)';
+  else if (social > 0.65) personality = 'Empathetic Connector (ENFJ)';
+  else if (tech > 0.65) personality = 'Systematic Builder (ISTP)';
 
   return {
     profile: {
       personality,
-      aptitudeScore: Math.min(99, aptitudeScore),
-      interests: interests.length > 0 ? interests : ["Technology", "Problem Solving", "Innovation"],
-      learningStyle: profileContext?.learningStyle || "Visual Learner",
-      academicStrengths: profileContext?.academicStrengths || ["Mathematics", "Science"],
+      aptitudeScore,
+      interests: interests.length ? interests : ['Problem Solving', 'Technology', 'Innovation'],
+      learningStyle: profileContext.learningStyle || 'Visual Learner',
+      academicStrengths: profileContext.academicStrengths || ['Mathematics', 'Science'],
     },
-    careerMatches: scoredCareers.map(c => ({
-      id: c.id,
-      title: c.title,
-      matchScore: c.matchScore,
-      demand: c.demand,
-      salary: c.salary,
-      description: c.description,
-      skills: c.skills,
-      category: c.category,
-      explanation: explanations[c.category] || "Your profile shows strong alignment with this career path."
-    }))
+    careerMatches: scored.map(c => ({
+      ...c,
+      explanation: explanations[c.category] || 'Your profile shows strong alignment with this career path.',
+    })),
   };
 };
 
@@ -87,69 +118,60 @@ router.post('/', async (req, res) => {
     const { answers, profileContext } = req.body;
 
     if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
-      console.log('Using smart mock recommendations (no GEMINI_API_KEY set).');
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(r => setTimeout(r, 2000));
       return res.json(generateMockRecommendations(answers || {}, profileContext || {}));
     }
 
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
     const prompt = `
-You are an expert Career Counselor AI. Analyze this comprehensive student assessment:
+You are an expert Indian career counselor AI. Analyse this student assessment:
 
-ASSESSMENT ANSWERS (1=Strongly Disagree, 5=Strongly Agree):
+ASSESSMENT ANSWERS (keys=questionId, values=1-5 scale):
 ${JSON.stringify(answers)}
 
 STUDENT PROFILE CONTEXT:
-- Learning Style: ${profileContext?.learningStyle || 'Not specified'}
-- Academic Strengths: ${JSON.stringify(profileContext?.academicStrengths || [])}
-- Budget: ${profileContext?.budget || 'Not specified'}
-- Location: ${profileContext?.location || 'Not specified'}
-- Preferred Mode: ${profileContext?.studyMode || 'Not specified'}
-- Education Level: ${profileContext?.educationLevel || 'Not specified'}
-- Interest Areas: ${JSON.stringify(profileContext?.interests || [])}
+- Learning Style: ${profileContext?.learningStyle}
+- Academic Strengths: ${JSON.stringify(profileContext?.academicStrengths)}
+- Budget for Education: ${profileContext?.budget}
+- Location: ${profileContext?.location}
+- Preferred Study Mode: ${profileContext?.studyMode}
+- Education Level: ${profileContext?.educationLevel}
+- Interest Areas: ${JSON.stringify(profileContext?.interests)}
 
-AVAILABLE CAREERS DATABASE:
+CAREER DATABASE (pick best 5 for this student):
 ${JSON.stringify(CAREER_DATABASE.map(c => ({ id: c.id, title: c.title, category: c.category, skills: c.skills })))}
 
-Based on the full profile, provide:
-1. A personality type description (like "Analytical Thinker (INTJ)")
-2. An estimated aptitude score (0-100)
-3. Top 3 interests inferred from answers
-4. Top 5 best-matching careers from the database with match score and explanation
-
-Respond STRICTLY as valid JSON (no markdown):
+Respond ONLY as valid JSON (no markdown, no backticks):
 {
   "profile": {
-    "personality": "string",
+    "personality": "string (e.g. Analytical Thinker (INTJ))",
     "aptitudeScore": number,
-    "interests": ["string", "string", "string"],
+    "interests": ["string","string","string"],
     "learningStyle": "string",
-    "academicStrengths": ["string", "string"]
+    "academicStrengths": ["string","string"]
   },
   "careerMatches": [
     {
-      "id": "c1",
+      "id": "indXX",
       "title": "string",
       "matchScore": number,
-      "demand": "High/Very High/Medium",
+      "demand": "string",
       "salary": "string",
       "description": "string",
       "skills": ["string"],
       "category": "string",
-      "explanation": "1-2 sentence explainable AI reason why this matches this student"
+      "explanation": "1-2 sentences explaining WHY this matches this specific student's profile"
     }
   ]
 }`;
 
     const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt });
-    const cleanJson = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
-    const result = JSON.parse(cleanJson);
-    res.json(result);
-  } catch (error) {
-    console.error("AI Recommendations Error:", error.message);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    res.json(generateMockRecommendations(req.body?.answers || {}, req.body?.profileContext || {}));
+    const clean = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
+    return res.json(JSON.parse(clean));
+  } catch (err) {
+    console.error('AI Error:', err.message);
+    await new Promise(r => setTimeout(r, 1000));
+    return res.json(generateMockRecommendations(req.body?.answers || {}, req.body?.profileContext || {}));
   }
 });
 
