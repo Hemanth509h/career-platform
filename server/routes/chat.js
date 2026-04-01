@@ -30,7 +30,7 @@ The student's profile: Name: ${userProfile?.name || 'Student'}, Email: ${userPro
 Keep your responses concise (2-4 sentences), warm, and actionable. Always end with a follow-up question or suggestion to keep the conversation going.`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: `${systemPrompt}\n\nStudent question: ${messages}`,
     });
 

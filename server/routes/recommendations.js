@@ -32,83 +32,76 @@ const CAREER_DATABASE = [
   { id: "ind25", title: "Journalist / Content Creator", demand: "Medium", salary: "₹3L – ₹20L", category: "Media", skills: ["Investigative Reporting", "Digital Storytelling", "Video Editing", "Social Media", "SEO for Content"], description: "Report stories and build audiences across digital media and social platforms in India." },
 ];
 
-// Smart mock recommendations based on assessment profile
+/**
+ * Smart fallback logic to match careers if AI is unavailable.
+ * Uses a 6-dimension heuristic (Personality, Aptitude, Interests, Academic, Learning, Context).
+ */
 const generateMockRecommendations = (answers = {}, profileContext = {}) => {
   const vals = Object.values(answers);
   const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 3;
   const aptitudeScore = Math.min(98, Math.round(45 + avg * 10 + Math.random() * 8));
 
-  const analyticalQ = ['a1', 'a4', 'p1'].map(k => answers[k] || 3);
+  // Dimension mapping
+  const analyticalQ = ['p1', 'a1', 'a4'].map(k => answers[k] || 3);
   const analytical = analyticalQ.reduce((a, b) => a + b, 0) / analyticalQ.length / 5;
-  const creative = ['p5'].map(k => answers[k] || 3).reduce((a, b) => a + b) / 5;
-  const social = ['p2', 'p3'].map(k => answers[k] || 3).reduce((a, b) => a + b, 0) / 2 / 5;
-  const tech = ['a2', 'a3', 'l1'].map(k => answers[k] || 3).reduce((a, b) => a + b, 0) / 3 / 5;
-  const leadership = ['p3', 'p4'].map(k => answers[k] || 3).reduce((a, b) => a + b, 0) / 2 / 5;
+  const creative = ['p5', 'a5', 'i3'].map(k => answers[k] || 3).reduce((a, b) => a + b, 0) / 3 / 5;
+  const social = ['p2', 'a2', 'i4', 'i7', 'i8'].map(k => answers[k] || 3).reduce((a, b) => a + b, 0) / 5 / 5;
+  const tech = ['a3', 'i1', 'i2', 'i6'].map(k => answers[k] || 3).reduce((a, b) => a + b, 0) / 4 / 5;
+  const leadership = ['p3', 'p4', 'i5'].map(k => answers[k] || 3).reduce((a, b) => a + b, 0) / 3 / 5;
 
   const categoryScores = {
-    Technology: 0.5 + tech * 0.5,
-    Finance: 0.4 + analytical * 0.5,
-    Business: 0.4 + leadership * 0.4 + analytical * 0.2,
-    Design: 0.3 + creative * 0.6,
-    Healthcare: 0.3 + social * 0.6,
-    Engineering: 0.4 + analytical * 0.4 + tech * 0.2,
-    Government: 0.35 + leadership * 0.3,
-    Education: 0.3 + social * 0.5,
-    Law: 0.3 + analytical * 0.3 + leadership * 0.2,
-    Science: 0.35 + analytical * 0.4,
-    Media: 0.25 + creative * 0.5,
+    Technology: 0.3 + tech * 0.7,
+    Finance: 0.3 + analytical * 0.4 + tech * 0.2 + leadership * 0.1,
+    Business: 0.3 + leadership * 0.5 + analytical * 0.2,
+    Design: 0.3 + creative * 0.7,
+    Healthcare: 0.3 + social * 0.6 + (profileContext.academicStrengths?.includes('Biology') ? 0.3 : 0),
+    Engineering: 0.3 + analytical * 0.4 + tech * 0.3,
+    Government: 0.4 + leadership * 0.3 + social * 0.2,
+    Education: 0.3 + social * 0.7,
+    Law: 0.4 + analytical * 0.4 + leadership * 0.2,
+    Science: 0.3 + analytical * 0.6 + tech * 0.1,
+    Media: 0.3 + creative * 0.4 + social * 0.3,
   };
 
   const interests = profileContext.interests || [];
   const interestBoost = { Technology: 0, Finance: 0, Business: 0, Design: 0, Healthcare: 0, Engineering: 0, Government: 0, Education: 0, Law: 0, Science: 0, Media: 0 };
+  
   interests.forEach(i => {
-    if (i.includes('Tech') || i.includes('Software')) interestBoost.Technology += 0.15;
-    if (i.includes('Data') || i.includes('Analytics')) { interestBoost.Technology += 0.1; interestBoost.Finance += 0.05; }
-    if (i.includes('Design') || i.includes('Creat')) interestBoost.Design += 0.2;
-    if (i.includes('Health') || i.includes('Medic')) interestBoost.Healthcare += 0.2;
-    if (i.includes('Business') || i.includes('Finance')) { interestBoost.Finance += 0.15; interestBoost.Business += 0.1; }
-    if (i.includes('Engi') || i.includes('Science')) interestBoost.Engineering += 0.15;
-    if (i.includes('Edu') || i.includes('Teach')) interestBoost.Education += 0.2;
-    if (i.includes('Social') || i.includes('Impact') || i.includes('NGO')) { interestBoost.Government += 0.1; interestBoost.Education += 0.1; }
+    if (i.includes('Tech')) interestBoost.Technology += 0.25;
+    if (i.includes('Data')) { interestBoost.Technology += 0.15; interestBoost.Finance += 0.1; }
+    if (i.includes('Design')) interestBoost.Design += 0.25;
+    if (i.includes('Health')) interestBoost.Healthcare += 0.25;
+    if (i.includes('Business') || i.includes('Finance')) { interestBoost.Finance += 0.2; interestBoost.Business += 0.1; }
+    if (i.includes('Engi') || i.includes('Science')) interestBoost.Engineering += 0.2;
+    if (i.includes('Edu')) interestBoost.Education += 0.25;
+    if (i.includes('Social')) { interestBoost.Government += 0.15; interestBoost.Education += 0.1; }
   });
 
   const scored = CAREER_DATABASE.map(c => {
-    const catScore = (categoryScores[c.category] || 0.4) + (interestBoost[c.category] || 0);
-    const score = Math.min(97, Math.max(55, Math.round(catScore * 100 + (Math.random() * 8 - 4))));
+    const baseCatScore = categoryScores[c.category] || 0.4;
+    const boost = interestBoost[c.category] || 0;
+    const score = Math.min(98, Math.max(55, Math.round((baseCatScore + boost) * 100 + (Math.random() * 6 - 3))));
     return { ...c, matchScore: score };
   }).sort((a, b) => b.matchScore - a.matchScore).slice(0, 5);
 
-  const explanations = {
-    Technology: `Your strong analytical aptitude (${aptitudeScore}%) and tech interest scores point to high alignment with tech careers.`,
-    Finance: `Your structured thinking and numerical ability suggest a natural fit with finance and accounting roles.`,
-    Business: `Your leadership orientation and problem-solving mindset align with strategy and consulting careers.`,
-    Design: `Your creative expression scores and visual thinking patterns match design-led roles.`,
-    Healthcare: `Your empathy scores and service orientation are ideal for patient-facing healthcare careers.`,
-    Engineering: `Your systematic reasoning and physics/math strengths align with core engineering fields.`,
-    Government: `Your social awareness and leadership scores align with public administration careers.`,
-    Education: `Your communication strength and social drive indicate excellent fit for educational roles.`,
-    Law: `Your structured reasoning and communication ability align well with legal practice.`,
-    Science: `Your analytical curiosity and research orientation fit science and R&D careers.`,
-    Media: `Your creative and communication skills match journalism and content creation.`,
-  };
-
-  let personality = 'Analytical Thinker (INTJ)';
-  if (creative > 0.65) personality = 'Creative Visionary (INFP)';
-  else if (leadership > 0.65) personality = 'Strategic Leader (ENTJ)';
-  else if (social > 0.65) personality = 'Empathetic Connector (ENFJ)';
-  else if (tech > 0.65) personality = 'Systematic Builder (ISTP)';
-
+  const personality = creative > 0.6 ? 'Creative Visionary' : leadership > 0.6 ? 'Strategic Leader' : analytical > 0.6 ? 'Analytical Thinker' : social > 0.6 ? 'Empathetic Guide' : 'Systematic Builder';
+  
   return {
     profile: {
       personality,
       aptitudeScore,
-      interests: interests.length ? interests : ['Problem Solving', 'Technology', 'Innovation'],
+      analyticalScore: Math.round(analytical * 100),
+      creativeScore: Math.round(creative * 100),
+      socialScore: Math.round(social * 100),
+      technicalScore: Math.round(tech * 100),
+      leadershipScore: Math.round(leadership * 100),
+      interests: interests.length ? interests : ['Problem Solving', 'Strategic Thinking'],
       learningStyle: profileContext.learningStyle || 'Visual Learner',
-      academicStrengths: profileContext.academicStrengths || ['Mathematics', 'Science'],
+      academicStrengths: profileContext.academicStrengths || [],
     },
     careerMatches: scored.map(c => ({
       ...c,
-      explanation: explanations[c.category] || 'Your profile shows strong alignment with this career path.',
+      explanation: `Your profile shows a ${Math.round(c.matchScore)}% match due to your strong alignment in the ${c.category} sector and your specified interest in ${interests[0] || 'innovation'}.`,
     })),
   };
 };
@@ -165,7 +158,7 @@ Respond ONLY as valid JSON (no markdown, no backticks):
   ]
 }`;
 
-    const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt });
+    const response = await ai.models.generateContent({ model: 'gemini-1.5-flash', contents: prompt });
     const clean = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
     return res.json(JSON.parse(clean));
   } catch (err) {

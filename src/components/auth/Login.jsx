@@ -33,26 +33,30 @@ const Login = () => {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 120px)', padding: '40px' }}>
-      <Card glass style={{ width: '100%', maxWidth: '420px', padding: '48px 40px' }} className="animate-fade-in">
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ background: 'rgba(99, 102, 241, 0.1)', width: '60px', height: '60px', borderRadius: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-            <LogIn color="var(--accent-color)" size={28} />
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 120px)', padding: '40px', position: 'relative', overflow: 'hidden' }}>
+      {/* Background Orbs */}
+      <div className="orb orb-1" style={{ top: '10%', left: '10%', width: '300px', height: '300px' }} />
+      <div className="orb orb-2" style={{ bottom: '10%', right: '10%', width: '400px', height: '400px' }} />
+
+      <Card glass style={{ width: '100%', maxWidth: '420px', padding: '48px 40px', position: 'relative', zIndex: 1 }} className="animate-pop-in">
+        <div className="stagger-children" style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div className="icon-bounce" style={{ background: 'rgba(99, 102, 241, 0.1)', width: '64px', height: '64px', borderRadius: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+            <LogIn color="var(--accent-color)" size={30} />
           </div>
-          <h2 style={{ marginBottom: '8px' }}>Welcome Back</h2>
-          <p style={{ fontSize: '0.95rem' }}>Login to view your personalized career path</p>
+          <h2 className="animate-slide-up" style={{ marginBottom: '8px', fontSize: '1.8rem', fontWeight: 800 }}>Welcome Back</h2>
+          <p className="animate-slide-up delay-100" style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>Login to view your personalized career path</p>
         </div>
 
         {error && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', padding: '12px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', color: '#ef4444', fontSize: '0.9rem' }}>
-            <AlertCircle size={16} />
+          <div className="animate-shake" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px', color: '#ef4444', fontSize: '0.9rem' }}>
+            <AlertCircle size={18} />
             {error}
           </div>
         )}
 
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '8px', color: 'var(--text-secondary)', fontWeight: 500 }}>Email Address</label>
+        <form onSubmit={handleLogin} className="stagger-children" style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+          <div className="animate-slide-up delay-200">
+            <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '8px', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Email Address</label>
             <input
               id="login-email"
               type="email"
@@ -65,8 +69,8 @@ const Login = () => {
               onBlur={(e) => e.target.style.borderColor = 'var(--glass-border)'}
             />
           </div>
-          <div>
-            <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '8px', color: 'var(--text-secondary)', fontWeight: 500 }}>Password</label>
+          <div className="animate-slide-up delay-300">
+            <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '8px', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password</label>
             <input
               id="login-password"
               type="password"
@@ -79,18 +83,18 @@ const Login = () => {
               onBlur={(e) => e.target.style.borderColor = 'var(--glass-border)'}
             />
           </div>
-          <Button id="login-submit" type="submit" variant="primary" style={{ marginTop: '8px', padding: '14px', opacity: loading ? 0.7 : 1 }} disabled={loading}>
-            {loading ? 'Logging in...' : 'Log In'}
+          <Button id="login-submit" type="submit" variant="primary" className="btn-ripple animate-slide-up delay-400" style={{ marginTop: '10px', padding: '16px', fontSize: '1rem', fontWeight: 700, borderRadius: '12px' }} disabled={loading}>
+            {loading ? 'Authenticating...' : 'Sign In To Dashboard'}
           </Button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '28px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+        <div className="animate-fade-in delay-500" style={{ textAlign: 'center', marginTop: '32px', fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
           Don't have an account?{' '}
-          <Link to="/register" style={{ fontWeight: 600, color: 'var(--accent-color)' }}>Sign up free</Link>
+          <Link to="/register" style={{ fontWeight: 700, color: 'var(--accent-color)', textDecoration: 'none' }} className="hover-underline">Sign up free</Link>
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.85rem', color: 'var(--text-secondary)', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-          💡 Use any email & password to log in during this demo
+        <div className="animate-fade-in delay-600" style={{ textAlign: 'center', marginTop: '20px', fontSize: '0.82rem', color: 'var(--text-secondary)', padding: '14px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+          💡 Tip: Use any email and password for this preview
         </div>
       </Card>
     </div>

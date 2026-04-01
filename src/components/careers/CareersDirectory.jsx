@@ -51,14 +51,14 @@ const CareersDirectory = () => {
   return (
     <div style={{ maxWidth: '1200px', margin: '40px auto', padding: '0 32px 60px' }}>
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <h1 className="text-gradient" style={{ marginBottom: '12px', fontSize: '2.2rem' }}>Explore Real Indian Careers</h1>
-        <p style={{ fontSize: '1.05rem', maxWidth: '600px', margin: '0 auto 32px', lineHeight: 1.7 }}>
+      <div className="animate-fade-in" style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <h1 className="text-gradient animate-slide-up" style={{ marginBottom: '12px', fontSize: '2.2rem' }}>Explore Real Indian Careers</h1>
+        <p className="animate-slide-up delay-100" style={{ fontSize: '1.05rem', maxWidth: '600px', margin: '0 auto 32px', lineHeight: 1.7 }}>
           Browse 25 real, in-demand career pathways with accurate salary ranges, top Indian companies, and step-by-step roadmaps.
         </p>
 
         {/* Search */}
-        <div style={{ position: 'relative', maxWidth: '560px', margin: '0 auto' }}>
+        <div className="animate-slide-up delay-200" style={{ position: 'relative', maxWidth: '560px', margin: '0 auto' }}>
           <Search color="var(--text-secondary)" size={20} style={{ position: 'absolute', left: '18px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
@@ -73,7 +73,7 @@ const CareersDirectory = () => {
       </div>
 
       {/* Category filter chips */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '32px', justifyContent: 'center' }}>
+      <div className="animate-fade-in delay-300" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '32px', justifyContent: 'center' }}>
         {existingCategories.map(cat => {
           const cc = CATEGORY_COLORS[cat] || CATEGORY_COLORS.Technology;
           const active = selectedCategory === cat;
@@ -81,6 +81,7 @@ const CareersDirectory = () => {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
+              className={active ? 'btn-ripple' : 'hover-lift'}
               style={{
                 padding: '7px 18px', borderRadius: '50px', cursor: 'pointer', fontSize: '0.85rem', transition: 'all 0.2s', fontWeight: active ? 600 : 400,
                 border: active ? `1px solid ${cat === 'All' ? 'var(--accent-color)' : cc.border}` : '1px solid var(--glass-border)',
@@ -93,7 +94,7 @@ const CareersDirectory = () => {
       </div>
 
       {/* Results count */}
-      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="animate-fade-in delay-400" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
           Showing <strong style={{ color: 'white' }}>{filteredCareers.length}</strong> career{filteredCareers.length !== 1 ? 's' : ''}
           {selectedCategory !== 'All' && ` in ${selectedCategory}`}
@@ -106,25 +107,25 @@ const CareersDirectory = () => {
       </div>
 
       {/* Career cards grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-        {filteredCareers.map(career => {
+      <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+        {filteredCareers.map((career, idx) => {
           const cc = CATEGORY_COLORS[career.category] || CATEGORY_COLORS.Technology;
           const demandColor = DEMAND_COLORS[career.demand] || 'var(--accent-color)';
           return (
-            <Card key={career.id} glass style={{ display: 'flex', flexDirection: 'column', padding: '26px' }}>
+            <Card key={career.id} glass className="animate-slide-up hover-lift" style={{ display: 'flex', flexDirection: 'column', padding: '26px' }}>
               {/* Category badge */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <span style={{ background: cc.bg, color: cc.text, border: `1px solid ${cc.border}`, padding: '4px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <span className="tag-hover" style={{ background: cc.bg, color: cc.text, border: `1px solid ${cc.border}`, padding: '4px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   {career.category}
                 </span>
                 <span style={{ fontSize: '0.75rem', color: demandColor, fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <TrendingUp size={13} /> {career.demand}
+                  <TrendingUp size={13} className="animate-pulse" /> {career.demand}
                 </span>
               </div>
 
               {/* Career icon + title */}
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
-                <div style={{ background: cc.bg, border: `1px solid ${cc.border}`, width: '44px', height: '44px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div className="icon-bounce" style={{ background: cc.bg, border: `1px solid ${cc.border}`, width: '44px', height: '44px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Briefcase size={20} color={cc.text} />
                 </div>
                 <h3 style={{ margin: 0, fontSize: '1.1rem', lineHeight: 1.3 }}>{career.title}</h3>
@@ -135,7 +136,7 @@ const CareersDirectory = () => {
               {/* Top skills */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '16px' }}>
                 {(career.skills || []).slice(0, 3).map(s => (
-                  <span key={s} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--glass-border)', padding: '3px 8px', borderRadius: '8px', fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{s}</span>
+                  <span key={s} className="tag-hover" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--glass-border)', padding: '3px 8px', borderRadius: '8px', fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{s}</span>
                 ))}
               </div>
 
@@ -159,8 +160,8 @@ const CareersDirectory = () => {
       </div>
 
       {filteredCareers.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '80px 20px' }}>
-          <Briefcase size={48} color="var(--text-secondary)" style={{ marginBottom: '16px' }} />
+        <div className="animate-fade-in" style={{ textAlign: 'center', padding: '80px 20px' }}>
+          <Briefcase size={48} color="var(--text-secondary)" style={{ marginBottom: '16px', opacity: 0.5 }} />
           <h3 style={{ marginBottom: '8px' }}>No careers found</h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>Try a different search or category filter.</p>
           <button className="btn-secondary" onClick={() => { setSearchTerm(''); setSelectedCategory('All'); }}>Clear all filters</button>

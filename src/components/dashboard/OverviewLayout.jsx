@@ -1,22 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Brain, Target, Lightbulb, BookOpen, TrendingUp, ChevronRight, Briefcase, Zap, LayoutDashboard, ArrowRight, Map } from 'lucide-react';
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+} from 'chart.js';
+import { Radar, Doughnut, Bar } from 'react-chartjs-2';
 import Card from '../ui/Card';
 import { useAuth } from '../../context/AuthContext';
 import { mockUser } from '../../services/mockData';
 
-const ScoreRing = ({ score, size = 80 }) => {
-  const r = size / 2 - 8;
-  const circ = 2 * Math.PI * r;
-  const dash = (score / 100) * circ;
-  return (
-    <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={7} />
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="url(#scoreGrad)" strokeWidth={7} strokeDasharray={`${dash} ${circ}`} strokeLinecap="round" />
-      <defs><linearGradient id="scoreGrad" x1="0%" y1="0%"><stop offset="0%" stopColor="#6366f1" /><stop offset="100%" stopColor="#a855f7" /></linearGradient></defs>
-    </svg>
-  );
-};
+ChartJS.register(
+  RadialLinearScale, PointElement, LineElement, Filler,
+  Tooltip, Legend, ArcElement, CategoryScale, LinearScale, BarElement
+);
 
 const DemandBadge = ({ demand }) => {
   const colors = {
@@ -27,6 +33,115 @@ const DemandBadge = ({ demand }) => {
   };
   const c = colors[demand] || colors['Medium'];
   return <span style={{ background: c.bg, color: c.text, border: `1px solid ${c.border}`, padding: '3px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: 600 }}>{demand} Demand</span>;
+};
+
+const AptitudeDoughnut = ({ score }) => {
+  const data = {
+    datasets: [{
+      data: [score, 100 - score],
+      backgroundColor: ['rgba(99,102,241,0.9)', 'rgba(255,255,255,0.04)'],
+      borderColor: ['rgba(99,102,241,1)', 'rgba(255,255,255,0.05)'],
+      borderWidth: 1,
+      hoverOffset: 4,
+    }],
+  };
+  const options = {
+    cutout: '72%',
+    animation: { animateRotate: true, duration: 1400, easing: 'easeInOutQuart' },
+    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+    responsive: true,
+    maintainAspectRatio: true,
+  };
+  return (
+    <div style={{ position: 'relative', width: 90, height: 90 }}>
+      <Doughnut data={data} options={options} />
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontSize: '1.3rem', fontWeight: 800, background: 'linear-gradient(135deg,#6366f1,#a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{score}</span>
+        <span style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>/100</span>
+      </div>
+    </div>
+  );
+};
+
+const ProfileRadar = ({ profile }) => {
+  const data = {
+    labels: ['Aptitude', 'Analytical', 'Creative', 'Social', 'Technical', 'Leadership'],
+    datasets: [{
+      label: 'Your Profile',
+      data: [
+        profile.aptitudeScore || 78,
+        profile.analyticalScore || 82,
+        profile.creativeScore || 65,
+        profile.socialScore || 70,
+        profile.technicalScore || 88,
+        profile.leadershipScore || 72,
+      ],
+      fill: true,
+      backgroundColor: 'rgba(99,102,241,0.15)',
+      borderColor: 'rgba(99,102,241,0.8)',
+      pointBackgroundColor: '#6366f1',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: '#6366f1',
+      pointRadius: 4,
+    }],
+  };
+  const options = {
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false, stepSize: 25 },
+        grid: { color: 'rgba(255,255,255,0.06)' },
+        angleLines: { color: 'rgba(255,255,255,0.06)' },
+        pointLabels: { color: 'rgba(255,255,255,0.6)', font: { size: 11 } },
+      }
+    },
+    animation: { duration: 1600, easing: 'easeInOutQuart' },
+    plugins: { legend: { display: false } },
+    responsive: true,
+    maintainAspectRatio: true,
+  };
+  return <Radar data={data} options={options} />;
+};
+
+const MatchBarChart = ({ matches }) => {
+  const top5 = (matches || []).slice(0, 5);
+  const data = {
+    labels: top5.map(m => m.title?.split(' ').slice(0, 2).join(' ') || ''),
+    datasets: [{
+      label: 'Match %',
+      data: top5.map(m => m.matchScore),
+      backgroundColor: [
+        'rgba(99,102,241,0.75)',
+        'rgba(168,85,247,0.7)',
+        'rgba(6,182,212,0.65)',
+        'rgba(16,185,129,0.65)',
+        'rgba(251,191,36,0.65)',
+      ],
+      borderColor: [
+        'rgba(99,102,241,1)',
+        'rgba(168,85,247,1)',
+        'rgba(6,182,212,1)',
+        'rgba(16,185,129,1)',
+        'rgba(251,191,36,1)',
+      ],
+      borderWidth: 1,
+      borderRadius: 8,
+      borderSkipped: false,
+    }],
+  };
+  const options = {
+    indexAxis: 'y',
+    scales: {
+      x: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 11 } } },
+      y: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 12 } } },
+    },
+    animation: { duration: 1400, easing: 'easeInOutQuart' },
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw}% match` } } },
+    responsive: true,
+    maintainAspectRatio: false,
+  };
+  return <Bar data={data} options={options} />;
 };
 
 const OverviewLayout = () => {
@@ -66,40 +181,43 @@ const OverviewLayout = () => {
   }
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '40px auto', padding: '0 32px 60px' }}>
+    <div style={{ maxWidth: '1200px', margin: '40px auto', padding: '0 32px 60px', position: 'relative' }}>
+      {/* Floating orbs */}
+      <div className="orb orb-1" style={{ position: 'absolute', zIndex: 0 }} />
+      <div className="orb orb-2" style={{ position: 'absolute', zIndex: 0 }} />
+
       {/* Welcome banner */}
-      <div className="glass-panel" style={{ padding: '28px 36px', marginBottom: '32px', background: 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.08))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+      <div className="glass-panel animate-fade-in" style={{ padding: '28px 36px', marginBottom: '32px', background: 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.08))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', position: 'relative', zIndex: 1 }}>
         <div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--accent-color)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Welcome back</div>
-          <h1 style={{ margin: '0 0 6px', fontSize: '1.8rem' }}>Hey, {user?.name?.split(' ')[0] || 'there'} 👋</h1>
-          <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Your 6-dimension career profile is ready. Here are your personalised Indian career matches.</p>
+          <div className="animate-slide-left" style={{ fontSize: '0.82rem', color: 'var(--accent-color)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Welcome back</div>
+          <h1 className="animate-slide-left delay-100" style={{ margin: '0 0 6px', fontSize: '1.8rem' }}>Hey, {user?.name?.split(' ')[0] || 'there'} 👋</h1>
+          <p className="animate-slide-left delay-200" style={{ margin: 0, color: 'var(--text-secondary)' }}>Your 6-dimension career profile is ready. Here are your personalised Indian career matches.</p>
         </div>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+        <div className="animate-slide-right" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <Link to="/assessments" className="btn-secondary" style={{ padding: '10px 20px', fontSize: '0.9rem', textDecoration: 'none' }}>Retake Assessment</Link>
           <Link to="/courses" className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.9rem', textDecoration: 'none' }}>Find Courses <ArrowRight size={15} /></Link>
         </div>
       </div>
 
       {/* Profile cards row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-        <Card glass style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', textAlign: 'center' }}>
-          <div style={{ position: 'relative', marginBottom: '12px' }}>
-            <ScoreRing score={profile.aptitudeScore} />
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', fontWeight: 800 }}>{profile.aptitudeScore}</div>
+      <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '32px', position: 'relative', zIndex: 1 }}>
+        <Card glass className="animate-slide-up" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', textAlign: 'center' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <AptitudeDoughnut score={profile.aptitudeScore} />
           </div>
           <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Aptitude Score</div>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>out of 100</div>
         </Card>
 
-        <Card glass style={{ padding: '24px', textAlign: 'center' }}>
-          <div style={{ background: 'rgba(99,102,241,0.12)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+        <Card glass className="animate-slide-up" style={{ padding: '24px', textAlign: 'center' }}>
+          <div className="icon-bounce" style={{ background: 'rgba(99,102,241,0.12)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
             <Brain size={22} color="var(--accent-color)" />
           </div>
           <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Personality Type</div>
           <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{profile.personality}</div>
         </Card>
 
-        <Card glass style={{ padding: '24px', textAlign: 'center' }}>
+        <Card glass className="animate-slide-up" style={{ padding: '24px', textAlign: 'center' }}>
           <div style={{ background: 'rgba(16,185,129,0.12)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
             <Zap size={22} color="var(--success-color)" />
           </div>
@@ -107,7 +225,7 @@ const OverviewLayout = () => {
           <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{profile.learningStyle}</div>
         </Card>
 
-        <Card glass style={{ padding: '24px' }}>
+        <Card glass className="animate-slide-up" style={{ padding: '24px' }}>
           <div style={{ background: 'rgba(251,191,36,0.12)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
             <Lightbulb size={22} color="var(--warning-color)" />
           </div>
@@ -120,7 +238,7 @@ const OverviewLayout = () => {
           ))}
         </Card>
 
-        <Card glass style={{ padding: '24px' }}>
+        <Card glass className="animate-slide-up" style={{ padding: '24px' }}>
           <div style={{ background: 'rgba(168,85,247,0.12)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
             <BookOpen size={22} color="var(--accent-color-alt)" />
           </div>
@@ -134,6 +252,29 @@ const OverviewLayout = () => {
         </Card>
       </div>
 
+      {/* ── CHARTS ROW ── */}
+      <div className="animate-fade-in delay-200" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '20px', marginBottom: '32px', position: 'relative', zIndex: 1 }}>
+        {/* Radar chart */}
+        <Card glass style={{ padding: '24px' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--accent-color)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Brain size={13} /> 6-Dimension Profile
+          </div>
+          <div style={{ maxWidth: '280px', margin: '0 auto' }}>
+            <ProfileRadar profile={profile} />
+          </div>
+        </Card>
+
+        {/* Horizontal bar chart */}
+        <Card glass style={{ padding: '24px' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--accent-color)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <TrendingUp size={13} /> Career Match Scores
+          </div>
+          <div style={{ height: '220px' }}>
+            <MatchBarChart matches={matches} />
+          </div>
+        </Card>
+      </div>
+
       {/* Career Matches */}
       <div style={{ marginBottom: '32px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -143,11 +284,11 @@ const OverviewLayout = () => {
           </Link>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div className="stagger-children" style={{ display: 'flex', flexDirection: 'column', gap: '14px', position: 'relative', zIndex: 1 }}>
           {(matches || []).slice(0, 5).map((career, idx) => (
             <div
               key={career.id}
-              className="glass-panel"
+              className="glass-panel animate-slide-up"
               style={{ padding: '22px 28px', cursor: 'pointer', border: expandedCareer === idx ? '1px solid rgba(99,102,241,0.4)' : '1px solid var(--glass-border)', transition: 'border-color 0.2s' }}
               onClick={() => setExpandedCareer(expandedCareer === idx ? null : idx)}
             >
@@ -176,8 +317,8 @@ const OverviewLayout = () => {
 
                 {/* Progress bar */}
                 <div style={{ minWidth: '100px', flex: 0.4 }}>
-                  <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${career.matchScore}%`, background: 'linear-gradient(90deg, var(--accent-color), var(--accent-color-alt))', borderRadius: '3px' }} />
+                  <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '30px', overflow: 'hidden' }}>
+                    <div className="progress-bar-animated" style={{ height: '100%', width: `${career.matchScore}%`, background: 'linear-gradient(90deg, var(--accent-color), var(--accent-color-alt))', borderRadius: '3px' }} />
                   </div>
                 </div>
 
@@ -194,7 +335,7 @@ const OverviewLayout = () => {
 
               {/* Expandable: Explainable AI + Skills */}
               {expandedCareer === idx && (
-                <div style={{ marginTop: '18px', paddingTop: '18px', borderTop: '1px solid var(--glass-border)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+                <div className="animate-fade-in" style={{ marginTop: '18px', paddingTop: '18px', borderTop: '1px solid var(--glass-border)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                   <div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--accent-color)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                       <Brain size={12} /> Why This Matches You
@@ -205,7 +346,7 @@ const OverviewLayout = () => {
                     <div style={{ fontSize: '0.75rem', color: 'var(--accent-color)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Key Skills to Build</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                       {(career.skills || []).map(s => (
-                        <span key={s} style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', padding: '4px 10px', borderRadius: '12px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{s}</span>
+                        <span key={s} className="tag-hover" style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', padding: '4px 10px', borderRadius: '12px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{s}</span>
                       ))}
                     </div>
                   </div>
@@ -217,15 +358,15 @@ const OverviewLayout = () => {
       </div>
 
       {/* Quick navigation cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+      <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', position: 'relative', zIndex: 1 }}>
         {[
           { to: '/careers', icon: <Briefcase size={20} color="var(--accent-color)" />, bg: 'rgba(99,102,241,0.12)', title: 'Explore Careers', sub: '25 real Indian careers' },
           { to: '/courses', icon: <BookOpen size={20} color="var(--success-color)" />, bg: 'rgba(16,185,129,0.12)', title: 'Find Courses', sub: 'IIT, Google, Coursera & more' },
           { to: topMatch ? `/career-pathway/${topMatch.id}` : '/careers', icon: <TrendingUp size={20} color="var(--accent-color-alt)" />, bg: 'rgba(168,85,247,0.12)', title: 'View Roadmap', sub: 'Skills → Certs → Jobs' },
           { to: '/assessments', icon: <Target size={20} color="var(--warning-color)" />, bg: 'rgba(251,191,36,0.1)', title: 'Retake Assessment', sub: 'Update your profile' },
         ].map(item => (
-          <Link key={item.to} to={item.to} style={{ textDecoration: 'none' }}>
-            <Card glass style={{ padding: '22px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%', boxSizing: 'border-box' }}>
+          <Link key={item.to} to={item.to} style={{ textDecoration: 'none' }} className="animate-slide-up">
+            <Card glass className="hover-lift" style={{ padding: '22px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%', boxSizing: 'border-box' }}>
               <div style={{ background: item.bg, width: '42px', height: '42px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{item.icon}</div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 600, marginBottom: '3px', fontSize: '0.92rem' }}>{item.title}</div>

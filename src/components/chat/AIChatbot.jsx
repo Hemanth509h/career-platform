@@ -87,68 +87,76 @@ const AIChatbot = () => {
       {isOpen && (
         <div
           id="chatbot-window"
-          className="glass-panel animate-fade-in"
+          className="glass-panel animate-slide-up"
           style={{
             position: 'fixed',
             bottom: '110px',
             right: '30px',
-            width: '400px',
-            height: '540px',
+            width: '420px',
+            height: '600px',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
             zIndex: 999,
-            boxShadow: '0 12px 40px rgba(0, 0, 0, 0.5)'
+            boxShadow: '0 24px 64px rgba(0, 0, 0, 0.6)',
+            border: '1px solid var(--glass-border)',
+            borderRadius: '24px'
           }}
         >
           {/* Header */}
-          <div style={{ padding: '20px', background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(168,85,247,0.1))', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ background: 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))', width: '40px', height: '40px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Bot size={22} color="white" />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1rem', margin: 0 }}>Career Advisor AI</h3>
-              <div style={{ fontSize: '0.78rem', color: 'var(--success-color)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '6px', height: '6px', background: 'var(--success-color)', borderRadius: '3px', display: 'inline-block' }}></span>
-                Powered by Google Gemini
+          <div style={{ padding: '24px', background: 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.15))', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div className="icon-bounce" style={{ background: 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))', width: '44px', height: '44px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 12px rgba(99,102,241,0.3)' }}>
+                <Bot size={24} color="white" />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 700 }}>Career Advisor AI</h3>
+                <div style={{ fontSize: '0.75rem', color: 'var(--success-color)', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', fontWeight: 600 }}>
+                  <span className="animate-pulse" style={{ width: '8px', height: '8px', background: 'var(--success-color)', borderRadius: '4px', display: 'inline-block' }}></span>
+                  Online • Gemini 1.5 Flash
+                </div>
               </div>
             </div>
+            <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', width: '32px', height: '32px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }} className="hover-lift">
+              <X size={18} />
+            </button>
           </div>
 
           {/* Messages Area */}
-          <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {messages.map((msg) => (
-              <div key={msg.id} style={{ display: 'flex', gap: '10px', alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '88%' }}>
+          <div className="stagger-children" style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px', background: 'rgba(0,0,0,0.2)' }}>
+            {messages.map((msg, idx) => (
+              <div key={msg.id} className="animate-fade-in" style={{ display: 'flex', gap: '12px', alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
                 {msg.sender === 'bot' && (
-                  <div style={{ width: '28px', height: '28px', borderRadius: '14px', background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '4px' }}>
-                    <Bot size={14} color="var(--accent-color)" />
+                  <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>
+                    <Bot size={16} color="var(--accent-color)" />
                   </div>
                 )}
-                <div style={{
+                <div className="hover-lift" style={{
                   background: msg.sender === 'user' ? 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))' : 'rgba(255, 255, 255, 0.05)',
                   border: msg.sender === 'user' ? 'none' : '1px solid var(--glass-border)',
-                  padding: '12px 16px',
-                  borderRadius: msg.sender === 'user' ? '18px 18px 4px 18px' : '4px 18px 18px 18px',
+                  padding: '14px 18px',
+                  borderRadius: msg.sender === 'user' ? '20px 20px 4px 20px' : '4px 20px 20px 20px',
                   color: 'white',
-                  fontSize: '0.9rem',
-                  lineHeight: '1.5'
+                  fontSize: '0.92rem',
+                  lineHeight: '1.6',
+                  boxShadow: msg.sender === 'user' ? '0 4px 15px rgba(99,102,241,0.2)' : 'none'
                 }}>
                   {msg.text}
                 </div>
                 {msg.sender === 'user' && (
-                  <div style={{ width: '28px', height: '28px', borderRadius: '14px', background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '4px' }}>
-                    <User size={14} color="var(--accent-color-alt)" />
+                  <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>
+                    <User size={16} color="var(--accent-color-alt)" />
                   </div>
                 )}
               </div>
             ))}
             {isLoading && (
-              <div style={{ display: 'flex', gap: '10px', alignSelf: 'flex-start', alignItems: 'center' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '14px', background: 'rgba(99,102,241,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Loader size={14} color="var(--accent-color)" style={{ animation: 'spin 1s linear infinite' }} />
+              <div className="animate-fade-in" style={{ display: 'flex', gap: '12px', alignSelf: 'flex-start', alignItems: 'center' }}>
+                <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Loader size={16} color="var(--accent-color)" style={{ animation: 'spin 1.5s linear infinite' }} />
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', padding: '12px 16px', borderRadius: '4px 18px 18px 18px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                  Thinking...
+                <div className="shimmer" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', padding: '12px 20px', borderRadius: '4px 20px 20px 20px', color: 'var(--text-secondary)', fontSize: '0.9rem', minWidth: '100px' }}>
+                  Analyzing your query...
                 </div>
               </div>
             )}
@@ -156,49 +164,66 @@ const AIChatbot = () => {
           </div>
 
           {/* Input Area */}
-          <form onSubmit={handleSend} style={{ padding: '16px', borderTop: '1px solid var(--glass-border)', display: 'flex', gap: '10px', background: 'rgba(0,0,0,0.15)' }}>
-            <input
-              id="chatbot-input"
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about any career, skill, or path..."
-              style={{
-                flex: 1,
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '24px',
-                padding: '10px 18px',
-                color: 'white',
-                outline: 'none',
-                fontFamily: 'inherit',
-                fontSize: '0.9rem'
-              }}
-              onFocus={(e) => e.target.style.borderColor = 'var(--accent-color)'}
-              onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
-            />
-            <button
-              id="chatbot-send"
-              type="submit"
-              disabled={isLoading || !input.trim()}
-              style={{
-                background: isLoading || !input.trim() ? 'rgba(99,102,241,0.3)' : 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))',
-                width: '42px',
-                height: '42px',
-                borderRadius: '21px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                border: 'none',
-                cursor: isLoading || !input.trim() ? 'not-allowed' : 'pointer',
-                flexShrink: 0,
-                transition: 'background 0.2s'
-              }}
-            >
-              <Send size={17} style={{ marginLeft: '1px' }} />
-            </button>
-          </form>
+          <div style={{ padding: '24px', borderTop: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(20px)' }}>
+            <form onSubmit={handleSend} style={{ display: 'flex', gap: '12px', position: 'relative' }}>
+              <input
+                id="chatbot-input"
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type your message..."
+                autoComplete="off"
+                style={{
+                  flex: 1,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '16px',
+                  padding: '14px 50px 14px 20px',
+                  color: 'white',
+                  outline: 'none',
+                  fontFamily: 'inherit',
+                  fontSize: '0.95rem',
+                  transition: 'all 0.3s ease'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'var(--accent-color)';
+                  e.target.style.background = 'rgba(255,255,255,0.07)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.04)';
+                }}
+              />
+              <button
+                id="chatbot-send"
+                type="submit"
+                disabled={isLoading || !input.trim()}
+                className="hover-lift"
+                style={{
+                  position: 'absolute',
+                  right: '6px',
+                  top: '6px',
+                  background: isLoading || !input.trim() ? 'rgba(255,255,255,0.05)' : 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))',
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  border: 'none',
+                  cursor: isLoading || !input.trim() ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: isLoading || !input.trim() ? 'none' : '0 4px 12px rgba(99,102,241,0.3)'
+                }}
+              >
+                <Send size={18} style={{ marginLeft: '2px' }} />
+              </button>
+            </form>
+            <div style={{ marginTop: '12px', textAlign: 'center', fontSize: '0.72rem', color: 'var(--text-secondary)', opacity: 0.6 }}>
+              Press Enter to send message
+            </div>
+          </div>
           <style dangerouslySetInnerHTML={{__html: `@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}} />
         </div>
       )}
