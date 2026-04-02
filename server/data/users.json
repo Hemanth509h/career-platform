@@ -1,0 +1,12 @@
+[
+  {
+    "_id": "u1775050117470",
+    "id": "u1775050117470",
+    "name": "Admin",
+    "email": "phemanthkumar509@gmail.com",
+    "password": "$2b$10$1ik97D95X393IWwLfp9gxuCi6zqaEPjDTDktxRt4riTol7KbqLQK2",
+    "role": "admin",
+    "isMinor": false,
+    "createdAt": "2026-04-01T20:20:00.000Z"
+  }
+]
