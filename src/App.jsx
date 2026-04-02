@@ -4,6 +4,7 @@ import Navbar from './components/layout/Navbar';
 import AIChatbot from './components/chat/AIChatbot';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import './App.css';
 
 // Lazy-loaded components for better performance
@@ -39,55 +40,57 @@ const RoleRedirect = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="app-container" style={{ flexDirection: 'column' }}>
-          <Navbar />
-          <main className="main-content" style={{ padding: '0' }}>
-            <Suspense fallback={<PageLoading />}>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<HeroSection />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/parent-signup" element={<ParentLink />} />
-                <Route path="/careers" element={<CareersDirectory />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <div className="app-container" style={{ flexDirection: 'column' }}>
+            <Navbar />
+            <main className="main-content" style={{ padding: '0' }}>
+              <Suspense fallback={<PageLoading />}>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<HeroSection />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/parent-signup" element={<ParentLink />} />
+                  <Route path="/careers" element={<CareersDirectory />} />
 
-                {/* Role redirect */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/dashboard" element={<RoleRedirect />} />
-                </Route>
+                  {/* Role redirect */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/dashboard" element={<RoleRedirect />} />
+                  </Route>
 
-                {/* Shared Routes (Student & Parent) */}
-                <Route element={<ProtectedRoute allowedRoles={['student', 'parent']} />}>
-                  <Route path="/career-pathway/:id" element={<CareerPathway />} />
-                  <Route path="/courses" element={<CourseRecommendations />} />
-                  <Route path="/courses/:careerId" element={<CourseRecommendations />} />
-                </Route>
+                  {/* Shared Routes (Student & Parent) */}
+                  <Route element={<ProtectedRoute allowedRoles={['student', 'parent']} />}>
+                    <Route path="/career-pathway/:id" element={<CareerPathway />} />
+                    <Route path="/courses" element={<CourseRecommendations />} />
+                    <Route path="/courses/:careerId" element={<CourseRecommendations />} />
+                  </Route>
 
-                {/* Student ONLY Routes */}
-                <Route element={<ProtectedRoute allowedRoles={['student']} />}>
-                  <Route path="/student-dashboard" element={<OverviewLayout />} />
-                  <Route path="/student" element={<StudentDashboard />} />
-                  <Route path="/assessments" element={<AssessmentWizard />} />
-                </Route>
+                  {/* Student ONLY Routes */}
+                  <Route element={<ProtectedRoute allowedRoles={['student']} />}>
+                    <Route path="/student-dashboard" element={<OverviewLayout />} />
+                    <Route path="/student" element={<StudentDashboard />} />
+                    <Route path="/assessments" element={<AssessmentWizard />} />
+                  </Route>
 
-                {/* Parent ONLY Routes */}
-                <Route element={<ProtectedRoute allowedRoles={['parent']} />}>
-                  <Route path="/parent-dashboard" element={<ParentDashboard />} />
-                </Route>
+                  {/* Parent ONLY Routes */}
+                  <Route element={<ProtectedRoute allowedRoles={['parent']} />}>
+                    <Route path="/parent-dashboard" element={<ParentDashboard />} />
+                  </Route>
 
-                {/* Admin Routes */}
-                <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-                  <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                </Route>
-              </Routes>
-            </Suspense>
-          </main>
-          <AIChatbot />
-        </div>
-      </Router>
-    </AuthProvider>
+                  {/* Admin Routes */}
+                  <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                    <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                  </Route>
+                </Routes>
+              </Suspense>
+            </main>
+            <AIChatbot />
+          </div>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

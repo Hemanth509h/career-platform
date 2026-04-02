@@ -32,5 +32,29 @@
     "role": "parent",
     "linkedStudentId": "u1775079843998",
     "createdAt": "2026-04-01T21:45:14.473Z"
+  },
+  {
+    "_id": "u1775094811235",
+    "id": "u1775094811235",
+    "name": "child1",
+    "email": "child1@gmail.com",
+    "password": "$2b$10$Ixaw2RW.ptY5wHcH2p8lhO/0VHzkLvqYRDCNXTiPLgBLM8aP.kWEK",
+    "dob": "2012-12-12",
+    "age": 13,
+    "isMinor": true,
+    "parentLinked": true,
+    "parentCode": "AFVCTM",
+    "role": "student",
+    "createdAt": "2026-04-02T01:53:31.235Z"
+  },
+  {
+    "_id": "u1775094866257",
+    "id": "u1775094866257",
+    "name": "parent2",
+    "email": "parent2@gmail.com",
+    "password": "$2b$10$0h0OT2Vbjg6C/CnQGUk8UOu1ZLYZ5ATXrLzKKJ7KzOsrd3PkMUKEu",
+    "role": "parent",
+    "linkedStudentId": "u1775094811235",
+    "createdAt": "2026-04-02T01:54:26.257Z"
   }
 ]

@@ -24,19 +24,30 @@ const AdminDashboard = () => {
     try {
       if (activeSection === 'analytics') {
         const r = await fetch(`${API}/admin/analytics`, { headers: authHeaders });
-        setAnalytics(await r.json());
+        const d = await r.json();
+        if (!r.ok) {
+           console.error("Admin Analytics Error:", d);
+           if (r.status === 401 || r.status === 403) alert("Access Denied or Session Expired. Please log in again.");
+           return setAnalytics(null);
+        }
+        setAnalytics(d);
       } else if (activeSection === 'users') {
         const r = await fetch(`${API}/admin/users`, { headers: authHeaders });
         const d = await r.json();
-        setUsers(Array.isArray(d) ? d : []);
+        if (!r.ok) {
+           console.error("Admin Users Error:", d);
+           if (r.status === 401 || r.status === 403) alert("Access Denied or Session Expired. Please log in again.");
+           return setUsers([]);
+        }
+        setUsers(Array.isArray(d) ? d : (d?.data || d?.users || []));
       } else if (activeSection === 'careers') {
-        const r = await fetch(`${API}/careers`);
+        const r = await fetch(`${API}/careers?limit=1000`);
         const d = await r.json();
-        setCareers(Array.isArray(d) ? d : []);
+        setCareers(Array.isArray(d) ? d : (d?.data || []));
       } else if (activeSection === 'courses') {
         const r = await fetch(`${API}/courses`, { headers: authHeaders });
         const d = await r.json();
-        setCourses(Array.isArray(d) ? d : []);
+        setCourses(Array.isArray(d) ? d : (d?.data || []));
       }
     } catch (e) {}
     setTimeout(() => setIsRefreshing(false), 600);

@@ -400,10 +400,12 @@
   {
     "userId": "u1775079843998",
     "savedCareers": [
-      "ind05"
+      "ind05",
+      "ind10"
     ],
     "selectedCareers": [
-      "ind05"
+      "ind05",
+      "ind10"
     ],
     "recommendations": [],
     "profile": {
@@ -500,6 +502,109 @@
         }
       ],
       "date": "2026-04-02T00:52:04.422Z"
+    }
+  },
+  {
+    "userId": "u1775094811235",
+    "savedCareers": [],
+    "selectedCareers": [],
+    "recommendations": [],
+    "profile": {
+      "personality": "Systematic Builder",
+      "aptitudeScore": 60,
+      "analyticalScore": 60,
+      "creativeScore": 60,
+      "socialScore": 60,
+      "technicalScore": 60,
+      "leadershipScore": 60,
+      "interests": [
+        "Data & Analytics",
+        "Education & Teaching"
+      ],
+      "learningStyle": "Visual Learner",
+      "academicStrengths": [
+        "History & Arts",
+        "Biology",
+        "Mathematics",
+        "Psychology"
+      ],
+      "visualSummaryUrl": "https://quickchart.io/chart?c=%7B%22type%22%3A%22radar%22%2C%22data%22%3A%7B%22labels%22%3A%5B%22Analytical%22%2C%22Creative%22%2C%22Social%22%2C%22Technical%22%2C%22Leadership%22%5D%2C%22datasets%22%3A%5B%7B%22label%22%3A%22Your%20Profile%22%2C%22data%22%3A%5B60%2C60%2C60%2C60%2C60%5D%2C%22backgroundColor%22%3A%22rgba(99%2C%20102%2C%20241%2C%200.2)%22%2C%22borderColor%22%3A%22rgba(99%2C%20102%2C%20241%2C%201)%22%2C%22borderWidth%22%3A2%2C%22pointRadius%22%3A3%2C%22pointBackgroundColor%22%3A%22rgba(99%2C%20102%2C%20241%2C%201)%22%7D%5D%7D%2C%22options%22%3A%7B%22legend%22%3A%7B%22display%22%3Afalse%7D%2C%22scale%22%3A%7B%22ticks%22%3A%7B%22display%22%3Afalse%2C%22min%22%3A0%2C%22max%22%3A100%2C%22stepSize%22%3A25%7D%2C%22gridLines%22%3A%7B%22color%22%3A%22rgba(255%2C%20255%2C%20255%2C%200.1)%22%7D%2C%22angleLines%22%3A%7B%22color%22%3A%22rgba(255%2C%20255%2C%20255%2C%200.1)%22%7D%2C%22pointLabels%22%3A%7B%22fontSize%22%3A10%2C%22fontColor%22%3A%22%2394a3b8%22%7D%7D%7D%7D"
+    },
+    "lastAssessment": {
+      "matches": [
+        {
+          "id": "ind02",
+          "title": "Data Scientist",
+          "salary": "₹8L – ₹45L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Extract insights from big data.",
+          "skills": [
+            "Python",
+            "ML",
+            "SQL"
+          ],
+          "matchScore": 99,
+          "explanation": "Your profile matches Data Scientist with a 99% confidence score based on your high Technology aptitude and alignment with your stated interests."
+        },
+        {
+          "id": "ind05",
+          "title": "Cloud Architect",
+          "salary": "₹15L – ₹60L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "Design cloud systems.",
+          "skills": [
+            "AWS",
+            "Azure"
+          ],
+          "matchScore": 97,
+          "explanation": "Your profile matches Cloud Architect with a 99% confidence score based on your high Technology aptitude and alignment with your stated interests."
+        },
+        {
+          "id": "ind09",
+          "title": "Full Stack Developer",
+          "salary": "₹6L – ₹35L",
+          "demand": "Very High",
+          "category": "Technology",
+          "description": "End-to-end web development.",
+          "skills": [
+            "React",
+            "Node"
+          ],
+          "matchScore": 96,
+          "explanation": "Your profile matches Full Stack Developer with a 99% confidence score based on your high Technology aptitude and alignment with your stated interests."
+        },
+        {
+          "id": "ind21",
+          "title": "Teacher",
+          "salary": "₹3L – ₹20L",
+          "demand": "High",
+          "category": "Education",
+          "description": "K-12 or higher educator.",
+          "skills": [
+            "Subject",
+            "Pedagogy"
+          ],
+          "matchScore": 95,
+          "explanation": "Your profile matches Teacher with a 99% confidence score based on your high Education aptitude and alignment with your stated interests."
+        },
+        {
+          "id": "ind23",
+          "title": "Mobile Developer",
+          "salary": "₹5L – ₹35L",
+          "demand": "High",
+          "category": "Technology",
+          "description": "Android/iOS app dev.",
+          "skills": [
+            "Flutter",
+            "Kotlin"
+          ],
+          "matchScore": 92,
+          "explanation": "Your profile matches Mobile Developer with a 99% confidence score based on your high Technology aptitude and alignment with your stated interests."
+        }
+      ],
+      "date": "2026-04-02T01:57:19.403Z"
     }
   }
 ]

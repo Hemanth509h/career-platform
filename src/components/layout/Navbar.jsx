@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Compass, LogOut, Menu, X, BookOpen, LayoutDashboard, Briefcase, ClipboardList, Users } from 'lucide-react';
+import { Compass, LogOut, Menu, X, BookOpen, LayoutDashboard, Briefcase, ClipboardList, Users, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useAgeGroup } from '../../hooks/useAgeGroup';
+import { useTheme } from '../../context/ThemeContext';
+import AdaptiveView from '../ui/AdaptiveView';
 
 const Navbar = () => {
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
+  const { group, isChild } = useAgeGroup();
+  const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
@@ -50,16 +55,18 @@ const Navbar = () => {
       {/* Desktop Nav */}
       <nav style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
         <Link to="/careers" className="nav-link" style={linkStyle('/careers')}>
-          <Briefcase size={16} /> Explore Careers
+          <Briefcase size={isChild ? 18 : 16} /> {isChild ? 'Explore Jobs' : 'Explore Careers'}
           {isActive('/careers') && <div style={{ position: 'absolute', bottom: '6px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '2px', background: 'var(--accent-color)' }} />}
         </Link>
         {isAuthenticated && (
           <>
             {user?.role !== 'parent' && (
-              <Link to="/assessments" className="nav-link" style={linkStyle('/assessments')}>
-                <ClipboardList size={16} /> Assessment
-                {isActive('/assessments') && <div style={{ position: 'absolute', bottom: '6px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '2px', background: 'var(--accent-color)' }} />}
-              </Link>
+              <AdaptiveView showFor={['teen', 'adult']}>
+                <Link to="/assessments" className="nav-link" style={linkStyle('/assessments')}>
+                  <ClipboardList size={16} /> Assessment
+                  {isActive('/assessments') && <div style={{ position: 'absolute', bottom: '6px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '2px', background: 'var(--accent-color)' }} />}
+                </Link>
+              </AdaptiveView>
             )}
             <Link to="/courses" className="nav-link" style={linkStyle('/courses')}>
               <BookOpen size={16} /> Courses
@@ -75,13 +82,16 @@ const Navbar = () => {
 
       {/* Auth */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <button onClick={toggleTheme} className="hover-lift" style={{ background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-primary)' }}>
+          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
         {isAuthenticated ? (
           <>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: '50px', border: '1px solid var(--glass-border)' }}>
               <div style={{ width: '28px', height: '28px', borderRadius: '14px', background: 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 800, color: 'white', border: '2px solid rgba(255,255,255,0.1)' }}>
                 {user?.name?.[0]?.toUpperCase() || 'U'}
               </div>
-              <span style={{ color: '#fff', fontSize: '0.85rem', fontWeight: 600 }}>{user?.name}</span>
+              <span style={{ color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: 600 }}>{user?.name}</span>
             </div>
             <button onClick={logout} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.85rem', gap: '6px', borderRadius: '12px' }}>
               <LogOut size={14} /> Exit
