@@ -19,7 +19,7 @@ const StatCard = ({ icon, label, value, color }) => (
 
 const CareerCard = ({ career, onSave, onSelect, saved, selected }) => {
   const careerId = career._id || career.id;
-  
+
   return (
     <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--glass-border)', borderRadius: '16px', padding: '20px', transition: 'transform 0.2s, border-color 0.2s', display: 'flex', flexDirection: 'column' }}
       onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = 'rgba(99,102,241,0.4)'; }}
@@ -34,11 +34,11 @@ const CareerCard = ({ career, onSave, onSelect, saved, selected }) => {
       <div style={{ marginTop: 'auto' }}>
         {careerId && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
-            <Link to={`/career-pathway/${careerId}`} 
+            <Link to={`/career-pathway/${careerId}`}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', padding: '10px', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: '8px', color: 'var(--accent-color)', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', transition: 'all 0.2s' }}>
               <TrendingUp size={14} /> View Roadmap
             </Link>
-            <Link to={`/courses?careerId=${careerId}`} 
+            <Link to={`/courses?careerId=${careerId}`}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', padding: '10px', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: '8px', color: 'var(--success-color)', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', transition: 'all 0.2s' }}>
               <BookOpen size={14} /> Recommended Courses
             </Link>
@@ -63,16 +63,15 @@ const StudentDashboard = () => {
   const token = localStorage.getItem('token');
   const [saved, setSaved] = useState([]);
   const [selected, setSelected] = useState([]);
-  const [feedback, setFeedback] = useState([]);
   const [careers, setCareers] = useState([]);
   const [activeTab, setActiveTab] = useState('recommended');
 
   const authHeaders = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 
   useEffect(() => {
-    fetch(`${API}/student/saved-careers`, { headers: authHeaders }).then(r => r.json()).then(d => setSaved(Array.isArray(d) ? d : [])).catch(() => {});
-    fetch(`${API}/student/selected-careers`, { headers: authHeaders }).then(r => r.json()).then(d => setSelected(Array.isArray(d) ? d : [])).catch(() => {});
-    
+    fetch(`${API}/student/saved-careers`, { headers: authHeaders }).then(r => r.json()).then(d => setSaved(Array.isArray(d) ? d : [])).catch(() => { });
+    fetch(`${API}/student/selected-careers`, { headers: authHeaders }).then(r => r.json()).then(d => setSelected(Array.isArray(d) ? d : [])).catch(() => { });
+
     // Fetch both assessment profile and global careers
     Promise.all([
       fetch(`${API}/student/profile`, { headers: authHeaders }).then(r => r.json()),
@@ -81,10 +80,10 @@ const StudentDashboard = () => {
       const matches = profile?.lastAssessment?.matches || [];
       // Handle paginated response: careersResult.data is the array
       const global = Array.isArray(careersResult) ? careersResult : (careersResult?.data || []);
-      
+
       // Matches are already enriched by the backend resolver
       setCareers(matches.length > 0 ? matches : global.slice(0, 12));
-    }).catch(() => {});
+    }).catch(() => { });
   }, []);
 
   const handleSave = async (careerId) => {
@@ -98,7 +97,7 @@ const StudentDashboard = () => {
     setSelected(prev => prev.includes(careerId) ? prev : [...prev, careerId]);
   };
 
-  const tabs = ['recommended', 'saved', 'selected', ...(user?.isMinor ? ['feedback'] : [])];
+  const tabs = ['recommended', 'saved', 'selected'];
 
   return (
     <div style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -115,7 +114,6 @@ const StudentDashboard = () => {
         <StatCard icon={<Briefcase />} label="Recommended" value={careers.length} color="#6366f1" />
         <StatCard icon={<Bookmark />} label="Saved" value={saved.length} color="#8b5cf6" />
         <StatCard icon={<Star />} label="Selected" value={`${selected.length}/3`} color="#22c55e" />
-        {user?.isMinor && <StatCard icon={<MessageSquare />} label="Feedback" value={feedback.length} color="#eab308" />}
       </div>
 
       {/* Tabs */}
@@ -143,8 +141,8 @@ const StudentDashboard = () => {
         saved.length === 0
           ? <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-secondary)' }}>No saved careers yet. Browse recommendations and save some!</div>
           : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-              {saved.map((c, i) => <CareerCard key={i} career={c} onSave={handleSave} onSelect={handleSelect} saved={true} selected={selected.includes(c._id)} />)}
-            </div>
+            {saved.map((c, i) => <CareerCard key={i} career={c} onSave={handleSave} onSelect={handleSelect} saved={true} selected={selected.includes(c._id)} />)}
+          </div>
       )}
 
       {activeTab === 'selected' && (
@@ -153,8 +151,8 @@ const StudentDashboard = () => {
           {selected.length === 0
             ? <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-secondary)' }}>No careers selected yet. Select up to 3 final careers.</div>
             : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-                {selected.map((c, i) => <CareerCard key={i} career={c} onSave={handleSave} onSelect={handleSelect} saved={saved.includes(c?._id)} selected={true} />)}
-              </div>
+              {selected.map((c, i) => <CareerCard key={i} career={c} onSave={handleSave} onSelect={handleSelect} saved={saved.includes(c?._id)} selected={true} />)}
+            </div>
           }
         </div>
       )}
@@ -163,14 +161,14 @@ const StudentDashboard = () => {
         feedback.length === 0
           ? <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-secondary)' }}>No messages from your parent yet.</div>
           : <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {feedback.map((f, i) => (
-                <div key={i} style={{ background: 'rgba(234,179,8,0.06)', border: '1px solid rgba(234,179,8,0.2)', borderRadius: '16px', padding: '20px' }}>
-                  <p style={{ color: '#eab308', fontSize: '0.78rem', fontWeight: 700, marginBottom: '8px', textTransform: 'uppercase' }}>Parent Message</p>
-                  <p style={{ color: 'white', lineHeight: 1.6 }}>{f.message}</p>
-                  <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '10px' }}>{new Date(f.createdAt).toLocaleDateString()}</p>
-                </div>
-              ))}
-            </div>
+            {feedback.map((f, i) => (
+              <div key={i} style={{ background: 'rgba(234,179,8,0.06)', border: '1px solid rgba(234,179,8,0.2)', borderRadius: '16px', padding: '20px' }}>
+                <p style={{ color: '#eab308', fontSize: '0.78rem', fontWeight: 700, marginBottom: '8px', textTransform: 'uppercase' }}>Parent Message</p>
+                <p style={{ color: 'white', lineHeight: 1.6 }}>{f.message}</p>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '10px' }}>{new Date(f.createdAt).toLocaleDateString()}</p>
+              </div>
+            ))}
+          </div>
       )}
     </div>
   );

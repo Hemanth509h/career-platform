@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, Bookmark, Star, TrendingUp, Send, Settings, CheckCircle2 } from 'lucide-react';
+import { User, Bookmark, Star, TrendingUp, Send, Settings, CheckCircle2, ChevronRight } from 'lucide-react';
 
 const API = '/api';
 
@@ -172,13 +172,10 @@ const ParentDashboard = () => {
                       <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>{c.description?.slice(0, 80)}…</p>
                     </div>
                     {(c.id || c.careerId) && (
-                      <a href={`/career-pathway/${c.id || c.careerId}`} style={{ color: '#22c55e', textDecoration: 'none', fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '8px', background: 'rgba(34,197,94,0.1)', marginLeft: 'auto', marginRight: '20px' }}>
+                      <a href={`/career-pathway/${c.id || c.careerId}`} style={{ color: '#22c55e', textDecoration: 'none', fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '8px', background: 'rgba(34,197,94,0.1)', marginLeft: 'auto', marginRight: '0' }}>
                         View Roadmap <ChevronRight size={14} />
                       </a>
                     )}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#22c55e', fontSize: '0.85rem', fontWeight: 700 }}>
-                    <CheckCircle2 size={18} /> Approved
                   </div>
                 </div>
               ))}

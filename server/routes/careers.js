@@ -118,7 +118,7 @@ router.get('/', async (req, res) => {
         });
     } catch (error) {
         console.error("Careers Fetch Error:", error.message);
-        res.status(500).json({ error: 'Failed to fetch careers' });
+        res.status(500).json({ message: 'Failed to fetch careers' });
     }
 });
 
@@ -128,7 +128,7 @@ router.get('/:id', async (req, res) => {
         const resolved = await resolveCareer(req.params.id);
         
         if (!resolved) {
-            return res.status(404).json({ error: 'Career not found' });
+            return res.status(404).json({ message: 'Career not found' });
         }
         
         const career = { ...resolved };
@@ -156,7 +156,7 @@ router.get('/:id', async (req, res) => {
         });
     } catch (error) {
         console.error("Error in career detail:", error);
-        res.status(500).json({ error: 'Failed to fetch career details' });
+        res.status(500).json({ message: 'Failed to fetch career details' });
     }
 });
 

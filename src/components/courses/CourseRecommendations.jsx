@@ -9,20 +9,8 @@ const ModeTag = ({ mode }) => {
   return <span style={{ background: c.bg, color: c.text, padding: '3px 10px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 600 }}>{mode}</span>;
 };
 
-const PlacementBar = ({ rate }) => (
-  <div style={{ marginTop: '4px' }}>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Placement Rate</span>
-      <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--success-color)' }}>{rate}%</span>
-    </div>
-    <div style={{ height: '3px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px' }}>
-      <div style={{ height: '100%', width: `${rate}%`, background: 'linear-gradient(90deg, var(--success-color), var(--accent-color))', borderRadius: '2px' }} />
-    </div>
-  </div>
-);
-
-const CourseCard = ({ course, selected, onToggleCompare, compareDisabled }) => (
-  <div className="glass-panel" style={{ padding: '22px', display: 'flex', flexDirection: 'column', height: '100%' }}>
+const CourseCard = ({ course, selected, onToggleCompare, compareDisabled, onViewDetails }) => (
+  <div className="card hover-lift" style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
     {/* Provider badge */}
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px', gap: '8px' }}>
       <div style={{ fontSize: '0.78rem', color: 'var(--accent-color)', fontWeight: 600, background: 'rgba(99,102,241,0.08)', padding: '4px 10px', borderRadius: '20px' }}>{course.category}</div>
@@ -47,7 +35,7 @@ const CourseCard = ({ course, selected, onToggleCompare, compareDisabled }) => (
       <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem', fontWeight: 700, color: course.fee === 0 ? 'var(--success-color)' : 'white' }}><Award size={13} /> {course.feeLabel}</span>
     </div>
 
-    <PlacementBar rate={course.placementRate} />
+
 
     <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '10px', marginBottom: '16px' }}>
       <Award size={12} style={{ display: 'inline', marginRight: '4px' }} />{course.accreditation}
@@ -55,7 +43,7 @@ const CourseCard = ({ course, selected, onToggleCompare, compareDisabled }) => (
 
     {/* Actions */}
     <div style={{ display: 'flex', gap: '8px' }}>
-      <button className="btn-primary" style={{ flex: 1, padding: '9px', fontSize: '0.83rem' }}>
+      <button className="btn-primary" onClick={() => (onViewDetails ? onViewDetails(course) : null)} style={{ flex: 1, padding: '9px', fontSize: '0.83rem' }}>
         View Details
       </button>
       <button
@@ -75,15 +63,15 @@ const CourseCard = ({ course, selected, onToggleCompare, compareDisabled }) => (
 );
 
 const CompareModal = ({ courses, onClose }) => (
-  <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={e => e.target === e.currentTarget && onClose()}>
-    <div className="glass-panel" style={{ width: '100%', maxWidth: '900px', maxHeight: '85vh', overflowY: 'auto', padding: '32px' }}>
+  <div className="animate-fade-in" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="glass-panel animate-scale-in" style={{ width: '100%', maxWidth: '900px', maxHeight: '85vh', overflowY: 'auto', padding: '32px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
-        <h2 style={{ margin: 0 }}>Course Comparison</h2>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', padding: '4px' }}><X size={22} /></button>
+        <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}><BarChart2 className="text-gradient" size={24} /> Course Comparison</h2>
+        <button onClick={onClose} className="hover-lift" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', padding: '4px' }}><X size={22} /></button>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${courses.length}, 1fr)`, gap: '20px' }}>
+      <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: `repeat(${courses.length}, 1fr)`, gap: '24px' }}>
         {courses.map(course => (
-          <div key={course.id}>
+          <div key={course.id} className="animate-slide-up">
             <h3 style={{ fontSize: '1rem', marginBottom: '8px' }}>{course.title}</h3>
             <p style={{ fontSize: '0.82rem', color: 'var(--accent-color)', marginBottom: '20px' }}>{course.provider}</p>
             {[
@@ -91,7 +79,7 @@ const CompareModal = ({ courses, onClose }) => (
               ['Duration', course.duration],
               ['Fee', course.feeLabel],
               ['Rating', `${course.rating} / 5`],
-              ['Placement Rate', `${course.placementRate}%`],
+
               ['Accreditation', course.accreditation],
               ['Category', course.category],
             ].map(([label, val]) => (
@@ -113,6 +101,65 @@ const CompareModal = ({ courses, onClose }) => (
   </div>
 );
 
+const CourseDetailsModal = ({ course, onClose }) => (
+  <div className="animate-fade-in" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="glass-panel animate-scale-in" style={{ width: '100%', maxWidth: '600px', maxHeight: '85vh', overflowY: 'auto', padding: '32px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+        <div>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+            <span style={{ fontSize: '0.78rem', color: 'var(--accent-color)', fontWeight: 600, background: 'rgba(99,102,241,0.08)', padding: '4px 10px', borderRadius: '20px' }}>{course.category}</span>
+            <ModeTag mode={course.mode} />
+            <span style={{ fontSize: '0.78rem', color: 'white', fontWeight: 600, background: 'rgba(255,255,255,0.1)', padding: '4px 10px', borderRadius: '20px' }}>{course.level}</span>
+          </div>
+          <h2 style={{ margin: 0, fontSize: '1.4rem', lineHeight: 1.3 }}>{course.title}</h2>
+          <p style={{ fontSize: '0.9rem', color: 'var(--accent-color)', marginTop: '8px' }}>{course.provider}</p>
+        </div>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', padding: '4px' }}><X size={22} /></button>
+      </div>
+
+      <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
+        {course.description}
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ padding: '12px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '8px' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Duration</div>
+          <div style={{ fontSize: '0.9rem', color: 'white', fontWeight: 600 }}>{course.duration}</div>
+        </div>
+        <div style={{ padding: '12px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '8px' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Fee</div>
+          <div style={{ fontSize: '0.9rem', color: 'white', fontWeight: 600 }}>{course.feeLabel}</div>
+        </div>
+        {course.placementRate && (
+          <div style={{ padding: '12px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '8px' }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Placement Rate</div>
+            <div style={{ fontSize: '0.9rem', color: 'white', fontWeight: 600 }}>{course.placementRate}%</div>
+          </div>
+        )}
+        {course.enrolled && (
+          <div style={{ padding: '12px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '8px' }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Enrolled</div>
+            <div style={{ fontSize: '0.9rem', color: 'white', fontWeight: 600 }}>{course.enrolled.toLocaleString()} +</div>
+          </div>
+        )}
+        <div style={{ padding: '12px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '8px', gridColumn: '1 / -1' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Accreditation</div>
+          <div style={{ fontSize: '0.9rem', color: 'white', fontWeight: 600 }}>{course.accreditation}</div>
+        </div>
+      </div>
+
+      <div>
+        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Skills You Will Learn</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
+          {course.skills?.map(s => <span key={s} style={{ background: 'rgba(99,102,241,0.1)', padding: '5px 12px', borderRadius: '16px', fontSize: '0.8rem', color: 'var(--accent-color)' }}>{s}</span>)}
+        </div>
+      </div>
+
+    </div>
+  </div>
+);
+
+
 const CourseRecommendations = () => {
   const [searchParams] = useSearchParams();
   const careerId = searchParams.get('careerId');
@@ -130,6 +177,7 @@ const CourseRecommendations = () => {
   const [compareList, setCompareList] = useState([]);
   const [showCompare, setShowCompare] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
   // 1. Debounce Search
   useEffect(() => {
@@ -196,11 +244,11 @@ const CourseRecommendations = () => {
   ];
 
   return (
-    <div style={{ maxWidth: '1240px', margin: '40px auto', padding: '0 32px 60px' }}>
+    <div className="animate-fade-in" style={{ maxWidth: '1240px', margin: '40px auto', padding: '0 32px 60px' }}>
       {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
+      <div className="animate-slide-up" style={{ marginBottom: '32px' }}>
         <h1 className="text-gradient" style={{ marginBottom: '8px' }}>Course Finder</h1>
-        <p>Compare top courses from IIT, IIM, Google, Coursera, and more. Filter by budget, mode, and duration.</p>
+        <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)' }}>Compare top courses from IIT, IIM, Google, Coursera, and more. Filter by budget, mode, and duration.</p>
       </div>
 
       {/* Search + filter toggle */}
@@ -233,7 +281,7 @@ const CourseRecommendations = () => {
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
+        <div className="glass-panel animate-scale-in" style={{ padding: '24px', marginBottom: '24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px', transformOrigin: 'top center' }}>
           <div>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600 }}>Study Mode</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -301,19 +349,21 @@ const CourseRecommendations = () => {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-             <Loader2 size={40} className="animate-spin" color="var(--accent-color)" />
+        <div className="animate-scale-in" style={{ textAlign: 'center', padding: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+             <Loader2 size={40} className="animate-spin text-gradient" color="var(--accent-color)" />
              <p style={{ color: 'var(--text-secondary)' }}>Fetching Optimized Results...</p>
         </div>
       ) : courses.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-secondary)' }}>
-          <BookOpen size={48} color="var(--glass-border)" style={{ marginBottom: '16px' }} />
-          <h3>No courses match your criteria</h3>
-          <p style={{ marginTop: '8px', fontSize: '0.9rem' }}>Try adjusting your filters or search keywords</p>
+        <div className="glass-panel animate-fade-in" style={{ textAlign: 'center', padding: '60px', color: 'var(--text-secondary)', borderStyle: 'dashed' }}>
+          <div className="icon-bounce" style={{ display: 'inline-block', marginBottom: '16px' }}>
+            <BookOpen size={64} color="rgba(99,102,241,0.5)" />
+          </div>
+          <h3 style={{ color: 'white', marginBottom: '8px' }}>No courses match your criteria</h3>
+          <p style={{ marginTop: '8px', fontSize: '0.9rem', maxWidth: '400px', margin: '0 auto' }}>Try adjusting your filters or search keywords to explore more options</p>
         </div>
       ) : (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+          <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
             {courses.map(course => (
               <CourseCard
                 key={course.id}
@@ -321,6 +371,7 @@ const CourseRecommendations = () => {
                 selected={!!compareList.find(c => c.id === course.id)}
                 onToggleCompare={toggleCompare}
                 compareDisabled={compareList.length >= 3}
+                onViewDetails={setSelectedCourse}
               />
             ))}
           </div>
@@ -353,6 +404,7 @@ const CourseRecommendations = () => {
       )}
 
       {showCompare && <CompareModal courses={compareList} onClose={() => setShowCompare(false)} />}
+      {selectedCourse && <CourseDetailsModal course={selectedCourse} onClose={() => setSelectedCourse(null)} />}
     </div>
   );
 };

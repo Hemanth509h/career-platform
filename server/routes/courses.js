@@ -96,8 +96,13 @@ router.post('/recommend', async (req, res) => {
 
     res.json({ courses: topCourses.length > 0 ? topCourses : relevant, aiNote: "AI-curated selection." });
   } catch (err) {
-    const courses = await db.readCourses();
-    res.json({ courses: courses.slice(0, 4), aiNote: "Showing best-matched courses from our catalog." });
+    console.error('Courses Recommendation AI Error:', err.message);
+    try {
+      const courses = await db.readCourses();
+      res.json({ courses: courses.slice(0, 4), aiNote: "Showing best-matched courses from our catalog." });
+    } catch (fallbackError) {
+      res.status(500).json({ message: 'Error recommending courses.' });
+    }
   }
 });
 

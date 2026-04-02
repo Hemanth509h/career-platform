@@ -399,87 +399,48 @@
   },
   {
     "userId": "u1775079843998",
-    "savedCareers": [],
-    "selectedCareers": [],
+    "savedCareers": [
+      "ind05"
+    ],
+    "selectedCareers": [
+      "ind05"
+    ],
     "recommendations": [],
     "profile": {
       "personality": "Creative Visionary",
-      "aptitudeScore": 100,
-      "analyticalScore": 100,
-      "creativeScore": 90,
-      "socialScore": 80,
-      "technicalScore": 76,
-      "leadershipScore": 87,
+      "aptitudeScore": 60,
+      "analyticalScore": 56,
+      "creativeScore": 80,
+      "socialScore": 50,
+      "technicalScore": 68,
+      "leadershipScore": 73,
       "interests": [
-        "Data & Analytics"
+        "Social Impact & NGO",
+        "Design & Creativity"
       ],
       "learningStyle": "Visual Learner",
       "academicStrengths": [
-        "Mathematics",
-        "Computer Science",
+        "Statistics",
+        "History & Arts",
         "English & Communication"
       ],
-      "visualSummaryUrl": "https://quickchart.io/chart?c=%7B%22type%22%3A%22radar%22%2C%22data%22%3A%7B%22labels%22%3A%5B%22Analytical%22%2C%22Creative%22%2C%22Social%22%2C%22Technical%22%2C%22Leadership%22%5D%2C%22datasets%22%3A%5B%7B%22label%22%3A%22Your%20Profile%22%2C%22data%22%3A%5B100%2C90%2C80%2C76%2C87%5D%2C%22backgroundColor%22%3A%22rgba(99%2C%20102%2C%20241%2C%200.2)%22%2C%22borderColor%22%3A%22rgba(99%2C%20102%2C%20241%2C%201)%22%2C%22borderWidth%22%3A2%2C%22pointRadius%22%3A3%2C%22pointBackgroundColor%22%3A%22rgba(99%2C%20102%2C%20241%2C%201)%22%7D%5D%7D%2C%22options%22%3A%7B%22legend%22%3A%7B%22display%22%3Afalse%7D%2C%22scale%22%3A%7B%22ticks%22%3A%7B%22display%22%3Afalse%2C%22min%22%3A0%2C%22max%22%3A100%2C%22stepSize%22%3A25%7D%2C%22gridLines%22%3A%7B%22color%22%3A%22rgba(255%2C%20255%2C%20255%2C%200.1)%22%7D%2C%22angleLines%22%3A%7B%22color%22%3A%22rgba(255%2C%20255%2C%20255%2C%200.1)%22%7D%2C%22pointLabels%22%3A%7B%22fontSize%22%3A10%2C%22fontColor%22%3A%22%2394a3b8%22%7D%7D%7D%7D"
+      "visualSummaryUrl": "https://quickchart.io/chart?c=%7B%22type%22%3A%22radar%22%2C%22data%22%3A%7B%22labels%22%3A%5B%22Analytical%22%2C%22Creative%22%2C%22Social%22%2C%22Technical%22%2C%22Leadership%22%5D%2C%22datasets%22%3A%5B%7B%22label%22%3A%22Your%20Profile%22%2C%22data%22%3A%5B56%2C80%2C50%2C68%2C73%5D%2C%22backgroundColor%22%3A%22rgba(99%2C%20102%2C%20241%2C%200.2)%22%2C%22borderColor%22%3A%22rgba(99%2C%20102%2C%20241%2C%201)%22%2C%22borderWidth%22%3A2%2C%22pointRadius%22%3A3%2C%22pointBackgroundColor%22%3A%22rgba(99%2C%20102%2C%20241%2C%201)%22%7D%5D%7D%2C%22options%22%3A%7B%22legend%22%3A%7B%22display%22%3Afalse%7D%2C%22scale%22%3A%7B%22ticks%22%3A%7B%22display%22%3Afalse%2C%22min%22%3A0%2C%22max%22%3A100%2C%22stepSize%22%3A25%7D%2C%22gridLines%22%3A%7B%22color%22%3A%22rgba(255%2C%20255%2C%20255%2C%200.1)%22%7D%2C%22angleLines%22%3A%7B%22color%22%3A%22rgba(255%2C%20255%2C%20255%2C%200.1)%22%7D%2C%22pointLabels%22%3A%7B%22fontSize%22%3A10%2C%22fontColor%22%3A%22%2394a3b8%22%7D%7D%7D%7D"
     },
     "lastAssessment": {
       "matches": [
         {
-          "id": "ind01",
-          "title": "Software Engineer",
-          "salary": "₹5L – ₹50L",
-          "demand": "Very High",
-          "category": "Technology",
-          "description": "Design and build software applications.",
+          "id": "ind10",
+          "title": "IAS / Civil Services",
+          "salary": "₹7L – ₹18L+",
+          "demand": "Stable",
+          "category": "Government",
+          "description": "UPSC public service roles.",
           "skills": [
-            "DSA",
-            "Java",
-            "Python"
+            "Polity",
+            "Ethics"
           ],
           "matchScore": 99,
-          "explanation": "Your profile matches Software Engineer with a 99% confidence score based on your high Technology aptitude and alignment with your stated interests."
-        },
-        {
-          "id": "ind02",
-          "title": "Data Scientist",
-          "salary": "₹8L – ₹45L",
-          "demand": "Very High",
-          "category": "Technology",
-          "description": "Extract insights from big data.",
-          "skills": [
-            "Python",
-            "ML",
-            "SQL"
-          ],
-          "matchScore": 99,
-          "explanation": "Your profile matches Data Scientist with a 99% confidence score based on your high Technology aptitude and alignment with your stated interests."
-        },
-        {
-          "id": "ind03",
-          "title": "AI / ML Engineer",
-          "salary": "₹12L – ₹65L",
-          "demand": "Very High",
-          "category": "Technology",
-          "description": "Build and deploy AI models.",
-          "skills": [
-            "Deep Learning",
-            "NLP"
-          ],
-          "matchScore": 99,
-          "explanation": "Your profile matches AI / ML Engineer with a 99% confidence score based on your high Technology aptitude and alignment with your stated interests."
-        },
-        {
-          "id": "ind04",
-          "title": "Cybersecurity Analyst",
-          "salary": "₹6L – ₹35L",
-          "demand": "Very High",
-          "category": "Technology",
-          "description": "Protect digital systems.",
-          "skills": [
-            "Hacking",
-            "Linux"
-          ],
-          "matchScore": 99,
-          "explanation": "Your profile matches Cybersecurity Analyst with a 99% confidence score based on your high Technology aptitude and alignment with your stated interests."
+          "explanation": "Your profile matches IAS / Civil Services with a 99% confidence score based on your high Government aptitude and alignment with your stated interests."
         },
         {
           "id": "ind05",
@@ -492,11 +453,53 @@
             "AWS",
             "Azure"
           ],
-          "matchScore": 99,
-          "explanation": "Your profile matches Cloud Architect with a 99% confidence score based on your high Technology aptitude and alignment with your stated interests."
+          "matchScore": 97,
+          "explanation": "Your profile matches Architect with a 99% confidence score based on your high Design aptitude and alignment with your stated interests."
+        },
+        {
+          "id": "ind16",
+          "title": "UX / UI Designer",
+          "salary": "₹5L – ₹30L",
+          "demand": "High",
+          "category": "Design",
+          "description": "Digital experience design.",
+          "skills": [
+            "Figma",
+            "Research"
+          ],
+          "matchScore": 96,
+          "explanation": "Your profile matches UX / UI Designer with a 99% confidence score based on your high Design aptitude and alignment with your stated interests."
+        },
+        {
+          "id": "ind28",
+          "title": "Interior Designer",
+          "salary": "₹4L – ₹25L",
+          "demand": "Medium",
+          "category": "Design",
+          "description": "Home and office aesthetics.",
+          "skills": [
+            "3ds Max",
+            "Design"
+          ],
+          "matchScore": 95,
+          "explanation": "Your profile matches Interior Designer with a 99% confidence score based on your high Design aptitude and alignment with your stated interests."
+        },
+        {
+          "id": "ind33",
+          "title": "Graphic Designer",
+          "salary": "₹3L – ₹15L",
+          "demand": "High",
+          "category": "Design",
+          "description": "Visual concept creation.",
+          "skills": [
+            "Photoshop",
+            "AI"
+          ],
+          "matchScore": 93,
+          "explanation": "Your profile matches Graphic Designer with a 99% confidence score based on your high Design aptitude and alignment with your stated interests."
         }
       ],
-      "date": "2026-04-02T00:28:40.262Z"
+      "date": "2026-04-02T00:52:04.422Z"
     }
   }
 ]

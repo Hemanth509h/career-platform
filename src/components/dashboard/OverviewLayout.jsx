@@ -150,7 +150,6 @@ const OverviewLayout = () => {
   const [aiResult, setAiResult] = useState(null);
   const [expandedCareer, setExpandedCareer] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [feedback, setFeedback] = useState([]);
   const [courses, setCourses] = useState([]);
   const [savedCareers, setSavedCareers] = useState([]);
   const [selectedCareers, setSelectedCareers] = useState([]);
@@ -204,16 +203,6 @@ const OverviewLayout = () => {
       // Still fetch to ensure sync
       fetchUserData();
     }
-    if (user?.isMinor) {
-      const token = localStorage.getItem('token');
-      fetch('/api/student/feedback', { 
-        headers: { 'Authorization': `Bearer ${token}` } 
-      })
-      .then(r => r.json())
-      .then(d => setFeedback(Array.isArray(d) ? d : []))
-      .catch(() => {});
-    }
-
     // Fetch all courses for matching (handle paginated response)
     fetch('/api/courses?limit=100')
       .then(r => r.json())
@@ -678,33 +667,6 @@ const OverviewLayout = () => {
         ))}
       </div>
 
-      {/* Parent Feedback Section for Minors */}
-      {user?.isMinor && (
-        <div style={{ marginTop: '48px', position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-            <MessageSquare size={22} color="#eab308" />
-            <h2 style={{ margin: 0, fontSize: '1.4rem' }}>Parent Feedback & Guidance</h2>
-          </div>
-          
-          {feedback.length === 0 ? (
-            <Card glass style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-              No messages from your parent yet. They will appear here once your parent reviews your progress.
-            </Card>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {feedback.map((f, i) => (
-                <div key={i} className="glass-panel animate-slide-up" style={{ background: 'rgba(234,179,8,0.06)', border: '1px solid rgba(234,179,8,0.2)', borderRadius: '20px', padding: '24px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                    <span style={{ color: '#eab308', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Message from Guardian</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{new Date(f.createdAt).toLocaleDateString()}</span>
-                  </div>
-                  <p style={{ color: 'white', lineHeight: 1.7, margin: 0, fontSize: '1rem' }}>{f.message}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 };

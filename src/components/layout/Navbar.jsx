@@ -55,10 +55,12 @@ const Navbar = () => {
         </Link>
         {isAuthenticated && (
           <>
-            <Link to="/assessments" className="nav-link" style={linkStyle('/assessments')}>
-              <ClipboardList size={16} /> Assessment
-              {isActive('/assessments') && <div style={{ position: 'absolute', bottom: '6px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '2px', background: 'var(--accent-color)' }} />}
-            </Link>
+            {user?.role !== 'parent' && (
+              <Link to="/assessments" className="nav-link" style={linkStyle('/assessments')}>
+                <ClipboardList size={16} /> Assessment
+                {isActive('/assessments') && <div style={{ position: 'absolute', bottom: '6px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '2px', background: 'var(--accent-color)' }} />}
+              </Link>
+            )}
             <Link to="/courses" className="nav-link" style={linkStyle('/courses')}>
               <BookOpen size={16} /> Courses
               {isActive('/courses') && <div style={{ position: 'absolute', bottom: '6px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '2px', background: 'var(--accent-color)' }} />}

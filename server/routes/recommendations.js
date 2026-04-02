@@ -151,7 +151,7 @@ STUDENT PROFILE CONTEXT:
 - Education Level: ${profileContext?.educationLevel}
 - Interest Areas: ${JSON.stringify(profileContext?.interests)}
 
-CAREER DATABASE (pick best 5 for this student):
+CAREER DATABASE (pick best 5 for this student. Rank them in order of fit, from highest to lowest. Assign a UNIQUE, realistic matchScore between 70-98 to each. Do NOT give them the exact same score):
 ${JSON.stringify(CAREER_DATABASE.map(c => ({ id: c.id, title: c.title, category: c.category, skills: c.skills })))}
 
 Respond ONLY as valid JSON (no markdown, no backticks):
@@ -178,10 +178,8 @@ Respond ONLY as valid JSON (no markdown, no backticks):
   ]
 }`;
 
-      const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const response = await ai.models.generateContent({ model: 'gemini-1.5-flash', contents: prompt });
+      const text = response.text;
       const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
       aiResult = JSON.parse(clean);
     }
@@ -195,6 +193,20 @@ Respond ONLY as valid JSON (no markdown, no backticks):
       aiResult.profile.aptitudeScore = forcedAptitudeScore;
     }
 
+    // Force unique varied match scores mathematically if AI gave identical scores
+    if (aiResult.careerMatches && aiResult.careerMatches.length > 0) {
+      // Sort matches descending dynamically
+      aiResult.careerMatches.sort((a, b) => b.matchScore - a.matchScore);
+      let lastScore = 101;
+      
+      aiResult.careerMatches.forEach((match) => {
+        if (match.matchScore >= lastScore) {
+          match.matchScore = lastScore - (Math.floor(Math.random() * 3) + 1);
+        }
+        lastScore = match.matchScore;
+      });
+    }
+
     // Resolve career IDs to ensure Roadmap links work instantly
     aiResult.careerMatches = await enrichCareerMatches(aiResult.careerMatches);
 
@@ -206,18 +218,23 @@ Respond ONLY as valid JSON (no markdown, no backticks):
     return res.json(aiResult);
   } catch (err) {
     console.error('AI Error:', err.message);
-    const careersData = await readCareers();
-    const fallback = generateMockRecommendations(careersData, req.body?.answers || {}, req.body?.profileContext || {});
-    
-    // Resolve fallback IDs too
-    fallback.careerMatches = await enrichCareerMatches(fallback.careerMatches);
+    try {
+      const careersData = await readCareers();
+      const fallback = generateMockRecommendations(careersData, req.body?.answers || {}, req.body?.profileContext || {});
+      
+      // Resolve fallback IDs too
+      fallback.careerMatches = await enrichCareerMatches(fallback.careerMatches);
 
-    // Save fallback to user profile if logged in
-    if (req.user && req.user.id) {
-      await saveUserAssessment(req.user.id, fallback);
+      // Save fallback to user profile if logged in
+      if (req.user && req.user.id) {
+        await saveUserAssessment(req.user.id, fallback);
+      }
+      
+      return res.json(fallback);
+    } catch (fallbackError) {
+      console.error('Fallback Error:', fallbackError.message);
+      return res.status(500).json({ message: 'Error generating recommendations.' });
     }
-    
-    return res.json(fallback);
   }
 });
 
