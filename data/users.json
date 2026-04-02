@@ -10,51 +10,27 @@
     "createdAt": "2026-04-01T20:20:00.000Z"
   },
   {
-    "_id": "u1775079843998",
-    "id": "u1775079843998",
-    "name": "kid12",
-    "email": "kid12@gmail.com",
-    "password": "$2b$10$sdnnBtpbEoxMqEgTX5MjkuvovdDEG.FaAOhtqD/9O.2MFeZwgwtHa",
-    "dob": "2014-12-12",
-    "age": 11,
-    "isMinor": true,
-    "parentLinked": true,
-    "parentCode": "G1BB4A",
-    "role": "student",
-    "createdAt": "2026-04-01T21:44:03.998Z"
-  },
-  {
-    "_id": "u1775079914473",
-    "id": "u1775079914473",
-    "name": "parent12",
-    "email": "parent12@gmail.com",
-    "password": "$2b$10$j9lxExP6JQg1Fuu3n7VGPeqZ3tEgCXCBpId2t3c4E3bklvQub5UFm",
-    "role": "parent",
-    "linkedStudentId": "u1775079843998",
-    "createdAt": "2026-04-01T21:45:14.473Z"
-  },
-  {
-    "_id": "u1775094811235",
-    "id": "u1775094811235",
-    "name": "child1",
-    "email": "child1@gmail.com",
-    "password": "$2b$10$Ixaw2RW.ptY5wHcH2p8lhO/0VHzkLvqYRDCNXTiPLgBLM8aP.kWEK",
+    "_id": "u1775095551195",
+    "id": "u1775095551195",
+    "name": "kid",
+    "email": "kid@gmail.com",
+    "password": "$2b$10$JxsJjH6yknCHvaCXDFTB.OFgkABD.CJPq6Ikwsh.MPvm7e/prFTru",
     "dob": "2012-12-12",
     "age": 13,
     "isMinor": true,
     "parentLinked": true,
-    "parentCode": "AFVCTM",
+    "parentCode": "150GTQ",
     "role": "student",
-    "createdAt": "2026-04-02T01:53:31.235Z"
+    "createdAt": "2026-04-02T02:05:51.195Z"
   },
   {
-    "_id": "u1775094866257",
-    "id": "u1775094866257",
-    "name": "parent2",
-    "email": "parent2@gmail.com",
-    "password": "$2b$10$0h0OT2Vbjg6C/CnQGUk8UOu1ZLYZ5ATXrLzKKJ7KzOsrd3PkMUKEu",
+    "_id": "u1775095584246",
+    "id": "u1775095584246",
+    "name": "Parent",
+    "email": "parent@gmail.com",
+    "password": "$2b$10$0ZE0mM.0RQ4UeXSnZAeakes0n4aI7SrS5sZBSde.NzLYsq5IPAfFa",
     "role": "parent",
-    "linkedStudentId": "u1775094811235",
-    "createdAt": "2026-04-02T01:54:26.257Z"
+    "linkedStudentId": "u1775095551195",
+    "createdAt": "2026-04-02T02:06:24.246Z"
   }
 ]
