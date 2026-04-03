@@ -46,6 +46,31 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET /api/careers/all - Return all careers (no pagination)
+router.get('/all', async (req, res) => {
+    try {
+        const careers = await readCareers();
+        const careerList = Object.entries(careers).map(([id, data]) => ({
+            id,
+            title: data.title,
+            category: data.category,
+            description: data.description,
+            demand: data.demand,
+            salary: data.salary,
+            skills: data.skills,
+            ...data
+        }));
+
+        res.json({
+            total: careerList.length,
+            careers: careerList
+        });
+    } catch (error) {
+        console.error('Error fetching all careers:', error);
+        res.status(500).json({ message: 'Failed to fetch all careers' });
+    }
+});
+
 // GET /api/careers/search/:keyword - Search careers by keyword (before :id routes)
 router.get('/search/:keyword', async (req, res) => {
     try {

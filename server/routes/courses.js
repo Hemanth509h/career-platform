@@ -63,6 +63,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/courses/all - return full course catalog
+router.get('/all', async (req, res) => {
+  try {
+    const courses = await db.readCourses();
+    res.json({ total: courses.length, courses });
+  } catch (error) {
+    console.error('Courses Fetch Error:', error.message);
+    res.status(500).json({ message: 'Error fetching all courses' });
+  }
+});
+
 // POST recommended courses for a career goal using AI
 router.post('/recommend', async (req, res) => {
   try {
