@@ -1,0 +1,27 @@
+{
+  "name": "career-platform-ollama",
+  "version": "1.0.0",
+  "description": "Ollama Qwen training data generator and chatbot for career platform",
+  "main": "ollama_chatbot.js",
+  "type": "commonjs",
+  "scripts": {
+    "generate-training": "node ollama_training_generator.js",
+    "chat": "node ollama_chatbot.js",
+    "chat:question": "node ollama_chatbot.js --question",
+    "check": "node ollama_chatbot.js --check",
+    "start": "node ollama_chatbot.js"
+  },
+  "keywords": [
+    "ollama",
+    "qwen",
+    "career",
+    "chatbot",
+    "training",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

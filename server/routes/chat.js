@@ -1,6 +1,19 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 
 const router = express.Router();
+
+const getCareerCount = () => {
+  try {
+    const filePath = path.join(process.cwd(), 'server', 'data', 'careers.json');
+    if (!fs.existsSync(filePath)) return 0;
+    const careers = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    return Array.isArray(careers) ? careers.length : Object.keys(careers).length;
+  } catch (error) {
+    return 0;
+  }
+};
 
 router.post('/', async (req, res) => {
   try {
@@ -12,7 +25,9 @@ router.post('/', async (req, res) => {
 
     const profile = userProfile?.profile || {};
 
+    const careerCount = getCareerCount() || 250;
     const systemPrompt = `You are an expert AI Career Advisor on the PathFinder AI platform.
+    The platform currently contains ${careerCount} career profiles and curated roadmaps.
     Student Profile:
     - Name: ${userProfile?.name || 'Student'}
     - Personality: ${profile.personality || 'Unknown'}
@@ -78,7 +93,33 @@ router.post('/', async (req, res) => {
       const lowerMsg = messages.toLowerCase();
       let mockResponse = '';
       
-      if (lowerMsg.includes('chart') || lowerMsg.includes('graph') || lowerMsg.includes('visualize') || lowerMsg.includes('profile')) {
+      if (lowerMsg.includes('total careers') || lowerMsg.includes('career count') || lowerMsg.includes('how many careers') || lowerMsg.includes('number of careers')) {
+        const totalCareers = careerCount;
+        const totalCareerChart = {
+          type: 'bar',
+          data: {
+            labels: ['Careers'],
+            datasets: [{
+              label: 'Total Careers',
+              data: [totalCareers],
+              backgroundColor: 'rgba(16,185,129,0.7)',
+              borderColor: 'rgba(34,197,94,1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: { display: true, text: 'Total Careers Available' }
+            },
+            scales: {
+              y: { beginAtZero: true, ticks: { stepSize: 10 } }
+            }
+          }
+        };
+
+        mockResponse = `Our platform currently has **${totalCareers} careers** in the catalog.\n\n![Total Careers](https://quickchart.io/chart?c=${encodeURIComponent(JSON.stringify(totalCareerChart))})\n\nWould you like a breakdown by domain next?`;
+      } else if (lowerMsg.includes('chart') || lowerMsg.includes('graph') || lowerMsg.includes('visualize') || lowerMsg.includes('profile')) {
         const chartConfig = {
           type: 'radar',
           data: {

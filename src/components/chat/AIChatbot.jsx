@@ -16,6 +16,64 @@ const AIChatbot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const renderMessageText = (text) => {
+    if (!text) return null;
+
+    // Normalize line breaks and numbering formatting
+    const normalized = text
+      .replace(/\r\n/g, '\n')
+      .replace(/\n\s*/g, '\n')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n+/g, '<br/>')
+      .replace(/\d+\.\s*/g, (match) => `${match}`);
+
+    // Convert image markdown with fallback inline rendering
+    const parts = normalized.split(/(!\[[^\]]*\]\([^\)]+\))/g);
+
+    return parts.map((part, i) => {
+      const imgMatch = part.match(/!\[(.*?)\]\((.*?)\)/);
+      if (imgMatch) {
+        return (
+          <div key={i} style={{ marginTop: '10px', background: 'rgba(255,255,255,0.04)', padding: '10px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.12)' }}>
+            <img
+              src={imgMatch[2]}
+              alt={imgMatch[1] || 'AI Generated Image'}
+              style={{ maxWidth: '100%', borderRadius: '8px', display: 'block' }}
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+          </div>
+        );
+      }
+
+      // Convert <strong> markers to React elements safely
+      const strongParts = part.split(/<strong>(.*?)<\/strong>/g);
+      if (strongParts.length > 1) {
+        return (
+          <span key={i}>
+            {strongParts.map((chunk, index) => {
+              if (index % 2 === 1) {
+                return <strong key={index}>{chunk}</strong>;
+              }
+              return chunk.split('<br/>').map((line, ln) => (
+                <React.Fragment key={`${index}-${ln}`}>
+                  {line}
+                  {ln < line.split('<br/>').length - 1 && <br />}
+                </React.Fragment>
+              ));
+            })}
+          </span>
+        );
+      }
+
+      return part.split('<br/>').map((line, lineIndex) => (
+        <React.Fragment key={`${i}-${lineIndex}`}>
+          {line}
+          {lineIndex < part.split('<br/>').length - 1 && <br />}
+        </React.Fragment>
+      ));
+    });
+  };
+
   const handleSend = async (e) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -60,23 +118,25 @@ const AIChatbot = () => {
         onClick={() => setIsOpen(!isOpen)}
         style={{
           position: 'fixed',
-          bottom: '30px',
-          right: '30px',
-          width: '60px',
-          height: '60px',
-          borderRadius: '30px',
+          bottom: '24px',
+          right: '24px',
+          width: '58px',
+          height: '58px',
+          borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: isOpen ? 'var(--panel-bg)' : 'linear-gradient(135deg, var(--accent-color) 0%, var(--accent-color-alt) 100%)',
+          background: isOpen ? 'rgba(24, 25, 30, 0.96)' : 'linear-gradient(135deg, var(--accent-color) 0%, var(--accent-color-alt) 100%)',
           color: 'white',
-          boxShadow: '0 8px 32px rgba(99, 102, 241, 0.4)',
-          zIndex: 1000,
+          boxShadow: '0 10px 28px rgba(0, 0, 0, 0.3)',
+          zIndex: 1100,
           cursor: 'pointer',
-          border: '1px solid var(--glass-border)',
-          transition: 'background 0.3s ease',
-          backdropFilter: 'blur(16px)'
+          border: '1px solid rgba(255,255,255,0.18)',
+          transition: 'transform 0.2s ease, background 0.3s ease',
+          backdropFilter: 'blur(12px)'
         }}
+        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.06)'}
+        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
       >
         {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
       </button>
@@ -88,17 +148,21 @@ const AIChatbot = () => {
           className="glass-panel"
           style={{
             position: 'fixed',
-            bottom: '110px',
-            right: '30px',
-            width: '420px',
-            height: '600px',
+            bottom: '100px',
+            right: '24px',
+            width: '380px',
+            maxWidth: 'calc(100vw - 48px)',
+            height: '560px',
+            maxHeight: 'calc(100vh - 90px)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            zIndex: 999,
-            boxShadow: '0 24px 64px rgba(0, 0, 0, 0.6)',
-            border: '1px solid var(--glass-border)',
-            borderRadius: '24px'
+            zIndex: 1050,
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.45)',
+            border: '1px solid rgba(255,255,255,0.14)',
+            borderRadius: '20px',
+            backdropFilter: 'blur(18px)',
+            background: 'rgba(14, 16, 25, 0.8)'
           }}
         >
           {/* Header */}
@@ -121,39 +185,29 @@ const AIChatbot = () => {
           </div>
 
           {/* Messages Area */}
-          <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px', background: 'rgba(0,0,0,0.2)' }}>
-            {messages.map((msg, idx) => (
-              <div key={msg.id} style={{ display: 'flex', gap: '12px', alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
+          <div style={{ flex: 1, padding: '18px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px', background: 'rgba(10,10,18,0.45)', borderRadius: '0 0 0 0', border: '1px solid rgba(255,255,255,0.08)' }}>
+            {messages.map((msg) => (
+              <div key={msg.id} style={{ display: 'flex', gap: '10px', alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '86%' }}>
                 {msg.sender === 'bot' && (
-                  <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>
+                  <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}> 
                     <Bot size={16} color="var(--accent-color)" />
                   </div>
                 )}
                 <div style={{
-                  background: msg.sender === 'user' ? 'linear-gradient(135deg, var(--accent-color), var(--accent-color-alt))' : 'rgba(255, 255, 255, 0.05)',
-                  border: msg.sender === 'user' ? 'none' : '1px solid var(--glass-border)',
-                  lineHeight: '1.6',
-                  boxShadow: msg.sender === 'user' ? '0 4px 15px rgba(99,102,241,0.2)' : 'none'
+                  maxWidth: '100%',
+                  borderRadius: '18px',
+                  padding: '12px 14px',
+                  lineHeight: '1.55',
+                  color: msg.sender === 'user' ? 'white' : 'var(--text-primary)',
+                  background: msg.sender === 'user' ? 'linear-gradient(130deg, rgba(99, 102, 241, 0.95), rgba(168, 85, 247, 0.95))' : 'rgba(34, 36, 50, 0.82)',
+                  border: msg.sender === 'user' ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(255,255,255,0.08)',
+                  boxShadow: msg.sender === 'user' ? '0 6px 16px rgba(99,102,241,0.22)' : '0 1px 10px rgba(0,0,0,0.25)',
+                  wordBreak: 'break-word'
                 }}>
-                  {msg.text.split(/(!\[.*?\]\(.*?\))/g).map((part, i) => {
-                    const imgMatch = part.match(/!\[(.*?)\]\((.*?)\)/);
-                    if (imgMatch) {
-                      return (
-                        <div key={i} style={{ marginTop: '10px', background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                          <img 
-                            src={imgMatch[2]} 
-                            alt={imgMatch[1] || 'AI Generated Chart'} 
-                            style={{ maxWidth: '100%', borderRadius: '8px', display: 'block' }}
-                            onError={(e) => { e.target.style.display = 'none'; }}
-                          />
-                        </div>
-                      );
-                    }
-                    return <span key={i}>{part}</span>;
-                  })}
+                  {renderMessageText(msg.text)}
                 </div>
                 {msg.sender === 'user' && (
-                  <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>
+                  <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'rgba(168,85,247,0.22)', border: '1px solid rgba(168,85,247,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <User size={16} color="var(--accent-color-alt)" />
                   </div>
                 )}
@@ -173,8 +227,8 @@ const AIChatbot = () => {
           </div>
 
           {/* Input Area */}
-          <div style={{ padding: '24px', borderTop: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(20px)' }}>
-            <form onSubmit={handleSend} style={{ display: 'flex', gap: '12px', position: 'relative' }}>
+          <div style={{ padding: '18px', borderTop: '1px solid rgba(255,255,255,0.08)', background: 'rgba(5,8,18,0.55)', backdropFilter: 'blur(24px)' }}>
+            <form onSubmit={handleSend} style={{ display: 'flex', gap: '10px', position: 'relative' }}>
               <input
                 id="chatbot-input"
                 type="text"
@@ -184,15 +238,17 @@ const AIChatbot = () => {
                 autoComplete="off"
                 style={{
                   flex: 1,
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '16px',
-                  padding: '14px 50px 14px 20px',
+                  minHeight: '44px',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '14px',
+                  padding: '12px 48px 12px 16px',
                   color: 'white',
                   outline: 'none',
                   fontFamily: 'inherit',
                   fontSize: '0.95rem',
-                  transition: 'background 0.3s ease'
+                  transition: 'all 0.25s ease',
+                  backdropFilter: 'blur(10px)'
                 }}
                 onFocus={(e) => {
                   e.target.style.background = 'rgba(255,255,255,0.07)';
