@@ -47,7 +47,7 @@ const TestimonialCard = ({ name, role, text, rating, delay }) => (
 
 const HeroSection = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
       {/* Background orbs */}
       <div className="orb orb-1" />
       <div className="orb orb-2" />

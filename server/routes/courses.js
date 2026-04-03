@@ -1,5 +1,4 @@
 import express from 'express';
-import { GoogleGenAI } from '@google/genai';
 import * as db from '../utils/db.js';
 
 const router = express.Router();
@@ -77,24 +76,8 @@ router.post('/recommend', async (req, res) => {
       (mode && mode !== 'All' ? c.mode === mode : true)
     ).slice(0, 6);
 
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
-      return res.json({ courses: relevant.length > 0 ? relevant : courses.slice(0, 4), aiNote: "Showing best-matched courses from our catalog." });
-    }
-
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const prompt = `A student wants to pursue: ${careerGoal}. Their budget is ₹${budget || 'flexible'}, preferred mode: ${mode || 'Any'}, location: ${location || 'Any'}. From the following course catalog, pick the top 3 most relevant and explain why each is a great fit in one sentence. Catalog: ${JSON.stringify(courses.map(c => ({ id: c.id, title: c.title, provider: c.provider, mode: c.mode, fee: c.fee })))}. Respond ONLY as valid JSON: { "topCourseIds": ["co1","co2","co3"], "reasons": { "co1": "reason", "co2": "reason", "co3": "reason" } }`;
-    const response = await ai.models.generateContent({ model: 'gemini-1.5-flash', contents: prompt });
-    const clean = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
-    const aiData = JSON.parse(clean);
-
-    const topCourses = aiData.topCourseIds
-      .map(id => {
-        const course = courses.find(c => c.id === id || c._id === id);
-        return course ? { ...course, aiReason: aiData.reasons[id] } : null;
-      })
-      .filter(Boolean);
-
-    res.json({ courses: topCourses.length > 0 ? topCourses : relevant, aiNote: "AI-curated selection." });
+    // Use fallback logic without AI
+    return res.json({ courses: relevant.length > 0 ? relevant : courses.slice(0, 4), aiNote: "Showing best-matched courses from our catalog." });
   } catch (err) {
     console.error('Courses Recommendation AI Error:', err.message);
     try {

@@ -63,9 +63,9 @@ const CareersDirectory = () => {
       const result = await res.json();
       
       if (res.ok) {
-        setCareers(result.data || []);
-        setTotal(result.total || 0);
-        setPages(result.pages || 1);
+        setCareers(result.careers || []);
+        setTotal(result.pagination?.total || 0);
+        setPages(result.pagination?.pages || 1);
       }
     } catch (err) {
       console.error('Failed to fetch careers:', err);

@@ -1,78 +1,10 @@
 import express from 'express';
 import { readCareers, readRoadmaps, resolveCareer } from '../utils/db.js';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const router = express.Router();
-
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-// Helper to generate AI roadmap
-const generateAIRoadmap = async (career) => {
-    const prompt = `
-        You are a career expert specializing in the Indian job market. 
-        Generate a detailed 4-stage learning roadmap and a list of top hiring companies for the career: "${career.title}".
-        Career Description: ${career.description}
-        Target Skills: ${career.skills.join(', ')}
-
-        Return ONLY a JSON object with this exact structure:
-        {
-            "topCompanies": ["Company 1", "Company 2", "Company 3", "Company 4", "Company 5"],
-            "steps": [
-                {
-                    "stage": "Foundation",
-                    "title": "Short title for stage 1",
-                    "description": "What to learn first in the Indian context",
-                    "courses": ["Resource/Course 1", "Resource/Course 2"]
-                },
-                {
-                    "stage": "Skill Building",
-                    "title": "Short title for stage 2",
-                    "description": "Deeper technical skills",
-                    "courses": ["Project/Certification 1", "Certification 2"]
-                },
-                {
-                    "stage": "Practical Experience",
-                    "title": "Short title for stage 3",
-                    "description": "Internships or projects",
-                    "courses": ["Platform 1", "Portfolio task"]
-                },
-                {
-                    "stage": "Job Ready",
-                    "title": "Short title for stage 4",
-                    "description": "Interview prep and final steps",
-                    "courses": ["Job portal", "Networking tip"]
-                }
-            ]
-        }
-    `;
-
-    try {
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-        }
-        throw new Error("Could not parse AI response");
-    } catch (error) {
-        console.error("AI Roadmap Error:", error.message);
-        // Fallback roadmap
-        return {
-            topCompanies: ["TATA", "Reliance", "Infosys", "Wipro", "HCL"],
-            steps: [
-                { stage: "Foundation", title: "Core Fundamentals", description: "Learn the basic principles of " + career.title, courses: ["YouTube Tutorials", "Introduction Courses"] },
-                { stage: "Skill Building", title: "Professional Tools", description: "Master the essential tools and software.", courses: ["Coursera", "Udemy Certs"] },
-                { stage: "Practical Experience", title: "Hands-on Projects", description: "Build a portfolio with real-world tasks.", courses: ["Personal Projects", "Freelance"] },
-                { stage: "Job Ready", title: "Placement Prep", description: "Prepare for Indian market interviews.", courses: ["Naukri.com", "LinkedIn Networking"] }
-            ]
-        };
-    }
-};
 
 // GET /api/careers - Get all careers (optionally filter by category) with pagination and projection
 router.get('/', async (req, res) => {
@@ -82,72 +14,131 @@ router.get('/', async (req, res) => {
         
         let careerList = Object.entries(careers).map(([id, data]) => ({
             id,
-            ...data
+            title: data.title,
+            category: data.category,
+            description: data.description,
+            demand: data.demand,
+            salary: data.salary,
+            skills: data.skills,
+            ...(lean ? {} : data)
         }));
-
-        if (category) {
-            careerList = careerList.filter(c => c.category === category);
-        }
-
-        // Projection (Payload Optimization)
-        if (lean === 'true' || lean === true) {
-            careerList = careerList.map(c => ({
-                id: c.id,
-                _id: c.id,
-                title: c.title,
-                category: c.category,
-                demand: c.demand,
-                salary: c.salary
-            }));
-        }
-
-        // Pagination
-        const pageNum = parseInt(page);
-        const limitNum = parseInt(limit);
-        const startIndex = (pageNum - 1) * limitNum;
-        const total = careerList.length;
         
-        const results = careerList.slice(startIndex, startIndex + limitNum);
+        if (category) {
+            careerList = careerList.filter(c => c.category.toLowerCase() === category.toLowerCase());
+        }
+        
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        const paginatedCareers = careerList.slice(startIndex, endIndex);
         
         res.json({
-            total,
-            page: pageNum,
-            limit: limitNum,
-            pages: Math.ceil(total / limitNum),
-            data: results
+            careers: paginatedCareers,
+            pagination: {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                total: careerList.length,
+                pages: Math.ceil(careerList.length / limit)
+            }
         });
     } catch (error) {
-        console.error("Careers Fetch Error:", error.message);
+        console.error("Error fetching careers:", error);
         res.status(500).json({ message: 'Failed to fetch careers' });
     }
 });
 
-// GET /api/careers/:id - Get full career roadmap
+// GET /api/careers/search/:keyword - Search careers by keyword (before :id routes)
+router.get('/search/:keyword', async (req, res) => {
+    try {
+        const keyword = req.params.keyword.toLowerCase();
+        const careers = await readCareers();
+        
+        const results = Object.entries(careers)
+            .map(([id, data]) => ({
+                id,
+                ...data
+            }))
+            .filter(c => 
+                c.title.toLowerCase().includes(keyword) ||
+                c.description.toLowerCase().includes(keyword) ||
+                c.category.toLowerCase().includes(keyword) ||
+                (c.skills && c.skills.some(s => s.toLowerCase().includes(keyword)))
+            )
+            .slice(0, 10);
+
+        res.json({ results, count: results.length });
+    } catch (error) {
+        console.error("Error searching careers:", error);
+        res.status(500).json({ message: 'Search failed' });
+    }
+});
+
+// GET /api/careers/:id/related - Get related careers (before general :id route)
+router.get('/:id/related', async (req, res) => {
+    try {
+        const career = await resolveCareer(req.params.id);
+        if (!career) {
+            return res.status(404).json({ message: 'Career not found' });
+        }
+
+        const careers = await readCareers();
+        const relatedCareers = Object.entries(careers)
+            .map(([id, data]) => ({
+                id,
+                title: data.title,
+                category: data.category,
+                description: data.description,
+                demand: data.demand,
+                salary: data.salary,
+                skills: data.skills,
+                similarity: 0
+            }))
+            .map(c => {
+                // Calculate similarity score
+                let similarity = 0;
+                if (c.category === career.category) similarity += 30;
+                if (career.skills && c.skills) {
+                    const commonSkills = career.skills.filter(s => c.skills.includes(s)).length;
+                    similarity += commonSkills * 15;
+                }
+                c.similarity = similarity;
+                return c;
+            })
+            .filter(c => c.id !== req.params.id && c.similarity > 0)
+            .sort((a, b) => b.similarity - a.similarity)
+            .slice(0, 6);
+
+        res.json({ relatedCareers });
+    } catch (error) {
+        console.error("Error finding related careers:", error);
+        res.status(500).json({ message: 'Failed to find related careers' });
+    }
+});
+
+// GET /api/careers/:id - Get detailed career information with roadmap (last :id route)
 router.get('/:id', async (req, res) => {
     try {
-        const resolved = await resolveCareer(req.params.id);
-        
-        if (!resolved) {
+        const career = await resolveCareer(req.params.id);
+        if (!career) {
             return res.status(404).json({ message: 'Career not found' });
         }
         
-        const career = { ...resolved };
-        const careerId = resolved.id;
         const roadmaps = await readRoadmaps();
+        const staticRoadmap = roadmaps[req.params.id];
         
-        // Check for static roadmap first
-        const staticRoadmap = roadmaps[careerId];
         if (staticRoadmap) {
             career.steps = staticRoadmap.steps;
             career.topCompanies = staticRoadmap.topCompanies;
             career.isHighFidelity = true;
-        } 
-        // If not found in static database and doesn't belong in the career object itself, generate on the fly
+        }
+        // Use fallback if no static data available
         else if (!career.steps || !career.topCompanies) {
-            const aiData = await generateAIRoadmap(career);
-            career.steps = aiData.steps;
-            career.topCompanies = aiData.topCompanies;
-            career.poweredByAI = true;
+            career.steps = [
+                { stage: "Foundation", title: "Core Fundamentals", description: "Learn the basic principles", courses: ["Online Tutorials", "Introduction Courses"] },
+                { stage: "Skill Building", title: "Professional Tools", description: "Master essential tools and software", courses: ["Coursera", "Udemy Certifications"] },
+                { stage: "Practical Experience", title: "Hands-on Projects", description: "Build a portfolio with real-world tasks", courses: ["Personal Projects", "Freelance Work"] },
+                { stage: "Job Ready", title: "Placement Prep", description: "Prepare for job market interviews", courses: ["Job Portals", "Networking"] }
+            ];
+            career.topCompanies = ["TATA", "Reliance", "Infosys", "Wipro", "HCL"];
         }
         
         res.json({
@@ -159,5 +150,5 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch career details' });
     }
 });
-
+   
 export default router;

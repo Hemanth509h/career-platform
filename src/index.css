@@ -48,15 +48,15 @@ body {
     radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
   background-attachment: fixed;
   color: var(--text-primary);
-  height: 100vh;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  overflow: hidden; /* Lock root scroll */
+  overflow-y: auto; /* Allow vertical scrolling */
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 html {
-  overflow: hidden;
-  height: 100vh;
+  overflow-y: auto; /* Allow vertical scrolling */
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 a {

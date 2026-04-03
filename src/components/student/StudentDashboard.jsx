@@ -92,8 +92,8 @@ const StudentDashboard = () => {
       fetch(`${API}/careers?limit=50`).then(r => r.json())
     ]).then(([profile, careersResult]) => {
       const matches = profile?.lastAssessment?.matches || [];
-      // Handle paginated response: careersResult.data is the array
-      const global = Array.isArray(careersResult) ? careersResult : (careersResult?.data || []);
+      // Handle paginated response: careersResult.careers is the array
+      const global = Array.isArray(careersResult) ? careersResult : (careersResult?.careers || []);
 
       // Matches are already enriched by the backend resolver
       setCareers(matches.length > 0 ? matches : global.slice(0, 12));

@@ -1,5 +1,4 @@
 import express from 'express';
-import { GoogleGenAI } from '@google/genai';
 import { auth } from '../middleware/auth.js';
 import { readCareers, saveUserAssessment, resolveCareer, enrichCareerMatches } from '../utils/db.js';
 
@@ -128,84 +127,10 @@ router.post('/', auth, async (req, res) => {
   try {
     const { answers, profileContext } = req.body;
     const careersData = await readCareers();
-    const CAREER_DATABASE = Object.values(careersData);
-    let aiResult;
 
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
-      await new Promise(r => setTimeout(r, 2000));
-      aiResult = generateMockRecommendations(careersData, answers || {}, profileContext || {});
-    } else {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const prompt = `
-You are an expert Indian career counselor AI. Analyse this student assessment:
-
-ASSESSMENT ANSWERS (keys=questionId, values=1-5 scale):
-${JSON.stringify(answers)}
-
-STUDENT PROFILE CONTEXT:
-- Learning Style: ${profileContext?.learningStyle}
-- Academic Strengths: ${JSON.stringify(profileContext?.academicStrengths)}
-- Budget for Education: ${profileContext?.budget}
-- Location: ${profileContext?.location}
-- Preferred Study Mode: ${profileContext?.studyMode}
-- Education Level: ${profileContext?.educationLevel}
-- Interest Areas: ${JSON.stringify(profileContext?.interests)}
-
-CAREER DATABASE (pick best 5 for this student. Rank them in order of fit, from highest to lowest. Assign a UNIQUE, realistic matchScore between 70-98 to each. Do NOT give them the exact same score):
-${JSON.stringify(CAREER_DATABASE.map(c => ({ id: c.id, title: c.title, category: c.category, skills: c.skills })))}
-
-Respond ONLY as valid JSON (no markdown, no backticks):
-{
-  "profile": {
-    "personality": "string (e.g. Analytical Thinker (INTJ))",
-    "aptitudeScore": number,
-    "interests": ["string","string","string"],
-    "learningStyle": "string",
-    "academicStrengths": ["string","string"]
-  },
-  "careerMatches": [
-    {
-      "id": "indXX",
-      "title": "string",
-      "matchScore": number,
-      "demand": "string",
-      "salary": "string",
-      "description": "string",
-      "skills": ["string"],
-      "category": "string",
-      "explanation": "1-2 sentences explaining WHY this matches this specific student's profile"
-    }
-  ]
-}`;
-
-      const response = await ai.models.generateContent({ model: 'gemini-1.5-flash', contents: prompt });
-      const text = response.text;
-      const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
-      aiResult = JSON.parse(clean);
-    }
-
-    // Force accurate aptitude score calculation from actual answers
-    const aptitudeKeys = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10'];
-    const aptSum = aptitudeKeys.reduce((s, k) => s + (Number(answers[k] || 3)), 0);
-    const forcedAptitudeScore = Math.round((aptSum / 50) * 100);
-    
-    if (aiResult.profile) {
-      aiResult.profile.aptitudeScore = forcedAptitudeScore;
-    }
-
-    // Force unique varied match scores mathematically if AI gave identical scores
-    if (aiResult.careerMatches && aiResult.careerMatches.length > 0) {
-      // Sort matches descending dynamically
-      aiResult.careerMatches.sort((a, b) => b.matchScore - a.matchScore);
-      let lastScore = 101;
-      
-      aiResult.careerMatches.forEach((match) => {
-        if (match.matchScore >= lastScore) {
-          match.matchScore = lastScore - (Math.floor(Math.random() * 3) + 1);
-        }
-        lastScore = match.matchScore;
-      });
-    }
+    // Use mock recommendations logic
+    await new Promise(r => setTimeout(r, 2000));
+    const aiResult = generateMockRecommendations(careersData, answers || {}, profileContext || {});
 
     // Resolve career IDs to ensure Roadmap links work instantly
     aiResult.careerMatches = await enrichCareerMatches(aiResult.careerMatches);
@@ -217,24 +142,8 @@ Respond ONLY as valid JSON (no markdown, no backticks):
 
     return res.json(aiResult);
   } catch (err) {
-    console.error('AI Error:', err.message);
-    try {
-      const careersData = await readCareers();
-      const fallback = generateMockRecommendations(careersData, req.body?.answers || {}, req.body?.profileContext || {});
-      
-      // Resolve fallback IDs too
-      fallback.careerMatches = await enrichCareerMatches(fallback.careerMatches);
-
-      // Save fallback to user profile if logged in
-      if (req.user && req.user.id) {
-        await saveUserAssessment(req.user.id, fallback);
-      }
-      
-      return res.json(fallback);
-    } catch (fallbackError) {
-      console.error('Fallback Error:', fallbackError.message);
-      return res.status(500).json({ message: 'Error generating recommendations.' });
-    }
+    console.error('Error:', err.message);
+    return res.status(500).json({ message: 'Error generating recommendations.' });
   }
 });
 

@@ -6,7 +6,7 @@ const AIChatbot = () => {
   const { user, isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, text: "Hi there! 👋 I'm your AI Career Advisor powered by Google Gemini. Ask me anything about your career matches, upskilling opportunities, or about any of the 250+ careers in our database!", sender: 'bot' }
+    { id: 1, text: "Hi there! 👋 I'm your AI Career Advisor powered by local Ollama AI. Ask me anything about your career matches, upskilling opportunities, or about any of the 250+ careers in our database!", sender: 'bot' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -111,7 +111,7 @@ const AIChatbot = () => {
                 <h3 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 700 }}>Career Advisor AI</h3>
                 <div style={{ fontSize: '0.75rem', color: 'var(--success-color)', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', fontWeight: 600 }}>
                   <span style={{ width: '8px', height: '8px', background: 'var(--success-color)', borderRadius: '4px', display: 'inline-block' }}></span>
-                  Online • Gemini 1.5 Flash
+                  Online • Ollama Local AI
                 </div>
               </div>
             </div>

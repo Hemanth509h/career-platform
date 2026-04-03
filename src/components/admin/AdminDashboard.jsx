@@ -43,7 +43,7 @@ const AdminDashboard = () => {
       } else if (activeSection === 'careers') {
         const r = await fetch(`${API}/careers?limit=1000`);
         const d = await r.json();
-        setCareers(Array.isArray(d) ? d : (d?.data || []));
+        setCareers(Array.isArray(d) ? d : (d?.careers || []));
       } else if (activeSection === 'courses') {
         const r = await fetch(`${API}/courses`, { headers: authHeaders });
         const d = await r.json();
